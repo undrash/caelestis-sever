@@ -20,10 +20,21 @@ class ObjectTypeController {
 
 
     public routes() {
+        this.router.get( '/', this.getObjectTypes );
         this.router.post( '/', this.createObjectType );
         this.router.delete( '/', this.deleteObjectType );
         this.router.put( "/propdefs/add", this.addPropertyDef );
         this.router.put( "/propdefs/remove", this.removePropertyDef );
+    }
+
+
+
+    public getObjectTypes(req: Request, res: Response, next: NextFunction) {
+
+        ObjectType.find()
+            .then( (objectTypes) => res.send( { success: true, objectTypes } ) )
+            .catch( next );
+
     }
 
 

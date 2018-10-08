@@ -3,8 +3,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 
 import Object from "../models/Object";
-import {Schema} from "mongoose";
-import {IPropertyValue} from "../models/interfaces/IPropertyValue";
+import { Schema } from "mongoose";
+import { IPropertyValue } from "../models/interfaces/IPropertyValue";
 
 
 
@@ -21,8 +21,31 @@ class ObjectController {
 
 
     public routes() {
+        this.router.get( '/', this.getObjects );
+        this.router.get( "/:type", this.getObjectsByType );
         this.router.post( '/', this.createObject );
         this.router.delete( "/:id", this.deleteObject );
+    }
+
+
+
+    public getObjects(req: Request, res: Response, next: NextFunction) {
+
+        Object.find()
+            .then( (objects) => res.send( { success: true, objects } ) )
+            .catch( next );
+
+    }
+
+
+
+    public getObjectsByType(req: Request, res: Response, next: NextFunction){
+        const type: string = req.params.type;
+
+
+        Object.find( { type })
+            .then( (objects) => res.send( { success: true, objects } ) )
+            .catch( next );
     }
 
 
