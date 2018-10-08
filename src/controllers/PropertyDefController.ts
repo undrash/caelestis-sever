@@ -20,8 +20,8 @@ class PropertyDefController {
 
 
     public routes() {
-        this.router.post( "/create", this.createPropertyDef );
-        this.router.delete( "/delete", this.deletePropertyDef );
+        this.router.post( '/', this.createPropertyDef );
+        this.router.delete( "/:id", this.deletePropertyDef );
     }
 
 

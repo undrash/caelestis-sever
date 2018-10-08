@@ -32,6 +32,13 @@ const PropertyValueSchema = new Schema({
     },
 
 
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "Object",
+        required: true
+    },
+
+
     value: Schema.Types.Mixed
 
 
