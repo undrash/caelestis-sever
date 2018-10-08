@@ -4,7 +4,7 @@ import { Schema, model } from "mongoose";
 
 import { IObject } from "./interfaces/IObject";
 
-
+import PropertyValueSchema from "./PropertyValue";
 
 
 
@@ -17,8 +17,8 @@ const ObjectSchema = new Schema({
     },
 
     properties: {
-        type: [ Schema.Types.ObjectId ],
-        ref: "PropertyValue"
+        type: [ PropertyValueSchema ],
+        default: []
     }
 
 

@@ -2,8 +2,9 @@
 
 import { Router, Request, Response, NextFunction } from "express";
 
-import PropertyValue from "../models/PropertyValue";
 import Object from "../models/Object";
+import {Schema} from "mongoose";
+import {IPropertyValue} from "../models/interfaces/IPropertyValue";
 
 
 
@@ -29,36 +30,26 @@ class ObjectController {
     public createObject(req: Request, res: Response, next: NextFunction) {
         const { type, properties } = req.body;
 
-        let propertyIds = [];
 
-        const object = new Object({
-            type
-        });
+        const object = new Object( { type } );
 
 
         for ( let i = 0; i < properties.length; i++ ) {
 
             let name: string = properties[i].name;
             let dataType: number = properties[i].dataType;
-            let propertyDef: string = properties[i].propertyDef;
-            let value: any = properties[i].value;
+            let propertyDef: Schema.Types.ObjectId = properties[i].propertyDef;
+            let value: Schema.Types.Mixed = properties[i].value;
 
 
-            let p = new PropertyValue({
+            object.properties.push(<IPropertyValue>{
                 name,
                 dataType,
                 propertyDef,
-                owner: object._id,
                 value
             });
 
-            propertyIds.push( p._id );
-
-            p.save();
         }
-
-
-        object.properties = propertyIds;
 
         object.save()
             .then( () => res.send( { success: true, object, message: ""} ) )

@@ -1,12 +1,11 @@
 
 
-import { Document, Schema } from "mongoose";
+import { Schema } from "mongoose";
 
 
 
 
-
-export interface IPropertyValue extends Document {
+export interface IPropertyValue extends Schema {
     name: string,
     dataType: number,
     propertyDef: Schema.Types.ObjectId,

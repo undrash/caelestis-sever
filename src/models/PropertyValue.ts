@@ -1,6 +1,6 @@
 
 
-import { Schema, model } from "mongoose";
+import { Schema } from "mongoose";
 
 import { IPropertyValue } from "./interfaces/IPropertyValue";
 
@@ -32,13 +32,6 @@ const PropertyValueSchema = new Schema({
     },
 
 
-    owner: {
-        type: Schema.Types.ObjectId,
-        ref: "Object",
-        required: true
-    },
-
-
     value: Schema.Types.Mixed
 
 
@@ -46,4 +39,4 @@ const PropertyValueSchema = new Schema({
 
 
 
-export default model<IPropertyValue>( "PropertyValue", PropertyValueSchema );
+export default PropertyValueSchema as IPropertyValue;

@@ -8,7 +8,6 @@ import * as logger from "morgan";
 import * as helmet from "helmet";
 import * as cors from "cors";
 
-import PropertyValueController from "./controllers/PropertyValueController";
 import PropertyDefController from "./controllers/PropertyDefController";
 import ObjectTypeController from "./controllers/ObjectTypeController";
 import ObjectController from "./controllers/ObjectController";
@@ -57,7 +56,6 @@ class Server {
 
         this.app.use( '/', router );
         this.app.use( "/api/v1/property-definitions/", PropertyDefController );
-        this.app.use( "/api/v1/property-values/", PropertyValueController );
         this.app.use( "/api/v1/object-types/", ObjectTypeController );
         this.app.use( "api/v1/objects/", ObjectController );
 

@@ -1,6 +1,7 @@
 
 
 import { Document, Schema } from "mongoose";
+import { IPropertyValue } from "./IPropertyValue";
 
 
 
@@ -8,5 +9,5 @@ import { Document, Schema } from "mongoose";
 
 export interface IObject extends Document {
     type: Schema.Types.ObjectId,
-    properties: Schema.Types.ObjectId[]
+    properties: IPropertyValue[]
 }
