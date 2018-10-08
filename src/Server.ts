@@ -9,6 +9,7 @@ import * as helmet from "helmet";
 import * as cors from "cors";
 
 import PropertyDefController from "./controllers/PropertyDefController";
+import PropertyValueController from "./controllers/PropertyValueController";
 
 
 
@@ -54,6 +55,7 @@ class Server {
 
         this.app.use( '/', router );
         this.app.use( "/api/v1/property-definitions/", PropertyDefController );
+        this.app.use( "/api/v1/property-values/", PropertyValueController );
 
     }
 
