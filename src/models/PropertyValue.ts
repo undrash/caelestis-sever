@@ -38,5 +38,13 @@ const PropertyValueSchema = new Schema({
 });
 
 
+/** Workaround for automatically registering value updates */
+
+PropertyValueSchema.pre( "validate", (next) => {
+    this.markModified( "value" );
+    next();
+});
+
+
 
 export default PropertyValueSchema as IPropertyValue;
