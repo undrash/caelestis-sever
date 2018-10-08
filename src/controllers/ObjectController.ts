@@ -22,7 +22,8 @@ class ObjectController {
 
     public routes() {
         this.router.get( '/', this.getObjects );
-        this.router.get( "/:type", this.getObjectsByType );
+        // this.router.get( "/:type", this.getObjectsByType );
+        this.router.get( "/search", this.searchForObjectsByConditions );
         this.router.post( '/', this.createObject );
         this.router.delete( "/:id", this.deleteObject );
     }
@@ -87,6 +88,30 @@ class ObjectController {
         Object.findByIdAndRemove( objectId )
             .then( () => res.send( { success: true, message: "Object successfully deleted." } ) )
             .catch( next );
+    }
+
+
+
+    public searchForObjectsByConditions(req: Request, res: Response, next: NextFunction) {
+        // Condition types: Equals, Not Equals, Contains
+
+        // Search for Object where Position ( propdef 5bbb937a235fd73ee828b96e ) equals Director
+
+        const propertyDef1: string = "5bbb937a235fd73ee828b96e";
+        const value1: any = "Director";
+
+        const propertyDef2: string = "5bbb937a235fd73ee828b96d";
+        const value2: any = "Smith";
+
+
+        Object.find( { $and: [
+            { "properties": { $elemMatch: { propertyDef: propertyDef1, value: value1 } } },
+            { "properties": { $elemMatch: { propertyDef: propertyDef2, value: value2 } } }
+        ]} )
+            .then( (objects) => res.send( { success: true, objects } ) )
+            .catch( next );
+
+        
     }
 
 }
