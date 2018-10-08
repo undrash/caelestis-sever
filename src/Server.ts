@@ -11,6 +11,7 @@ import * as cors from "cors";
 import PropertyDefController from "./controllers/PropertyDefController";
 import ObjectTypeController from "./controllers/ObjectTypeController";
 import ObjectController from "./controllers/ObjectController";
+import DataHelper from "./helpers/DataHelper";
 
 
 
@@ -57,7 +58,8 @@ class Server {
         this.app.use( '/', router );
         this.app.use( "/api/v1/property-definitions/", PropertyDefController );
         this.app.use( "/api/v1/object-types/", ObjectTypeController );
-        this.app.use( "api/v1/objects/", ObjectController );
+        this.app.use( "/api/v1/objects/", ObjectController );
+        this.app.use( "/api/v1/data/", DataHelper );
 
     }
 
