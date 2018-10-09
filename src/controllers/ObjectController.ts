@@ -3,8 +3,10 @@
 import { Router, Request, Response, NextFunction } from "express";
 
 import Object from "../models/Object";
-import { Schema } from "mongoose";
+import { Schema, Types } from "mongoose";
 import { IPropertyValue } from "../models/interfaces/IPropertyValue";
+
+
 
 
 
@@ -21,11 +23,45 @@ class ObjectController {
 
 
     public routes() {
-        this.router.get( '/', this.getObjects );
-        // this.router.get( "/:type", this.getObjectsByType );
         this.router.get( "/search", this.searchForObjectsByConditions );
-        this.router.post( '/', this.createObject );
+        this.router.post( "/properties", this.setProperties );
+        this.router.get( "/type/:id", this.getObjectsByType );
         this.router.delete( "/:id", this.deleteObject );
+        this.router.post( '/', this.createObject );
+        this.router.get( '/', this.getObjects );
+    }
+
+
+
+    public setProperties(req: Request, res: Response, next: NextFunction) {
+
+        const { Id, Properties } = req.body;
+
+        Object.findById( { _id: Id } )
+            .then( (object) => {
+
+                if ( ! object ) {
+                    res.send( { success: false, message: "Object of id " + Id + " not found." } );
+                    return;
+                }
+
+                for ( let i = 0; i < Properties.length; i++ ) {
+
+                    for ( let j = 0; j < object.properties.length; j++ ) {
+
+                        if ( Properties[i].Id == ( object.properties[j] as any )._id ) {
+
+                            object.properties[j].value = Properties[i].Value;
+                            break;
+                        }
+                    }
+                }
+
+                return object.save();
+
+            })
+            .then( (object) => res.send( { success: true, object, message: "Object successfully updated." } ) )
+            .catch( next );
     }
 
 
@@ -41,7 +77,7 @@ class ObjectController {
 
 
     public getObjectsByType(req: Request, res: Response, next: NextFunction){
-        const type: string = req.params.type;
+        const type: string = req.params.id;
 
 
         Object.find( { type })
@@ -92,6 +128,9 @@ class ObjectController {
 
 
 
+
+
+
     public searchForObjectsByConditions(req: Request, res: Response, next: NextFunction) {
         // Condition types: Equals, Not Equals, Contains
 
@@ -107,7 +146,7 @@ class ObjectController {
         Object.find( { $and: [
             { "properties": { $elemMatch: { propertyDef: propertyDef1, value: value1 } } },
             { "properties": { $elemMatch: { propertyDef: propertyDef2, value: value2 } } }
-        ]} )
+            ]})
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
 
