@@ -3,7 +3,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 
 import Object from "../models/Object";
-import { Schema, Types } from "mongoose";
+import { Schema } from "mongoose";
 import { IPropertyValue } from "../models/interfaces/IPropertyValue";
 
 
@@ -128,9 +128,6 @@ class ObjectController {
 
 
 
-
-
-
     public searchForObjectsByConditions(req: Request, res: Response, next: NextFunction) {
         // Condition types: Equals, Not Equals, Contains
 
@@ -151,6 +148,25 @@ class ObjectController {
             .catch( next );
 
         
+    }
+
+
+
+    private generateQueryFromSearchConditions(): any {
+        let query = {};
+
+
+
+        return query;
+    }
+
+
+
+    private validateValueForProperty(value: any, type: number): boolean {
+
+        // Input the value for the type
+
+        return true;
     }
 
 }
