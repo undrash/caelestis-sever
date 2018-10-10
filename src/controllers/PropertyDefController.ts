@@ -20,6 +20,7 @@ class PropertyDefController {
 
 
     public routes() {
+        this.router.get( '/', this.getPropertyDefs );
         this.router.post( '/', this.createPropertyDef );
         this.router.delete( "/:id", this.deletePropertyDef );
     }
@@ -48,6 +49,16 @@ class PropertyDefController {
         PropertyDef.findByIdAndRemove( propertyDefId )
             .then( () => res.send( { success: true, message: "Property definition successfully deleted." } ) )
             .catch( next );
+    }
+
+
+
+    public getPropertyDefs(req: Request, res: Response, next: NextFunction) {
+
+        PropertyDef.find({})
+            .then( (propertyDefs) => res.send( { success: true, properties: propertyDefs } ) )
+            .catch( next );
+
     }
 
 }
