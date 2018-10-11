@@ -41,7 +41,9 @@ const PropertyDefSchema = new Schema({
 
 
 PropertyDefSchema.pre( "save", function (next) {
-   const self = this as IPropertyDef;
+    const self = this as IPropertyDef;
+
+    if ( ! self.objectType ) next();
 
     if ( ! /^[a-fA-F0-9]{24}$/.test( self.objectType ) ) {
         next( new Error( "Invalid id provided for object type, when creating a property definition." ) );
