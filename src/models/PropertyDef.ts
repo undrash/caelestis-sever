@@ -4,6 +4,7 @@ import {Schema, model, Types, Model} from "mongoose";
 
 import { IPropertyDef } from "./interfaces/IPropertyDef";
 import ObjectType from "./ObjectType";
+import Object from "./Object";
 
 
 
@@ -62,7 +63,34 @@ PropertyDefSchema.pre( "save", function (next) {
         }
     });
 
+});
 
+
+
+PropertyDefSchema.pre( "save", function (next) {
+    const self = this as IPropertyDef;
+
+    if ( ! self.requiredFor.length ) next();
+
+    Object.count( { _id: { $in: self.requiredFor } }, function (err, count) {
+
+        console.log( " COUNT IS: " + count );
+
+
+        if ( err ) {
+
+            next( err );
+
+        } else if ( count !== self.requiredFor.length ) {
+
+            self.invalidate( "requiredFor", "Object types listed as required for must contain a valid document id", count );
+            next( new Error( "Object types listed as required for must contain a valid document id" ) );
+
+        } else {
+            next();
+        }
+
+    });
 
 });
 
