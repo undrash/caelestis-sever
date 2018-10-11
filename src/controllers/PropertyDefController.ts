@@ -28,11 +28,12 @@ class PropertyDefController {
 
 
     public createPropertyDef(req: Request, res: Response, next: NextFunction) {
-        const { name, dataType, requiredFor } = req.body;
+        const { name, dataType, objectType, requiredFor } = req.body;
 
         const propertyDef = new PropertyDef({
             name,
             dataType,
+            objectType,
             requiredFor
         });
 
