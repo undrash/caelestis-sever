@@ -74,9 +74,6 @@ PropertyDefSchema.pre( "save", function (next) {
 
     Object.count( { _id: { $in: self.requiredFor } }, function (err, count) {
 
-        console.log( " COUNT IS: " + count );
-
-
         if ( err ) {
 
             next( err );
