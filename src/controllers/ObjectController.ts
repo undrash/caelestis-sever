@@ -57,10 +57,17 @@ class ObjectController {
                     }
                 }
 
+                // TODO beforeEditObject
+
                 return object.save();
 
             })
-            .then( (object) => res.send( { success: true, object, message: "Object successfully updated." } ) )
+            .then( (object) => {
+
+                // TODO afterEditObject
+
+                res.send( { success: true, object, message: "Object successfully updated." } );
+            } )
             .catch( next );
     }
 
@@ -111,8 +118,16 @@ class ObjectController {
 
         }
 
+        // TODO beforeCreateObject
+
         object.save()
-            .then( () => res.send( { success: true, object, message: ""} ) )
+            .then( () => {
+
+                // TODO afterCreateObject
+
+                res.send( { success: true, object, message: "" } );
+
+            })
             .catch( next );
     }
 
@@ -121,8 +136,16 @@ class ObjectController {
     public deleteObject(req: Request, res: Response, next: NextFunction) {
         const objectId: string = req.params.id;
 
+        // TODO beforeDeleteObject
+
         Object.findByIdAndRemove( objectId )
-            .then( () => res.send( { success: true, message: "Object successfully deleted." } ) )
+            .then( () => {
+
+                // TODO afterDeleteObject
+
+                res.send( { success: true, message: "Object successfully deleted." } );
+
+            })
             .catch( next );
     }
 
