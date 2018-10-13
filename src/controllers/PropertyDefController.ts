@@ -21,6 +21,7 @@ class PropertyDefController {
 
     public routes() {
         this.router.get( '/', this.getPropertyDefs );
+        this.router.get( "/:id", this.getPropertyDefById );
         this.router.post( '/', this.createPropertyDef );
         this.router.delete( "/:id", this.deletePropertyDef );
         this.router.put( "/required/", this.setPropertyDefRequired );
@@ -61,6 +62,15 @@ class PropertyDefController {
             .then( (propertyDefs) => res.send( { success: true, properties: propertyDefs } ) )
             .catch( next );
 
+    }
+
+
+    public getPropertyDefById(req: Request, res: Response, next: NextFunction) {
+        const { id } = req.params;
+
+        PropertyDef.findById( id )
+            .then( (objectType) => res.send( { success: true, objectType } ) )
+            .catch( next );
     }
 
 
