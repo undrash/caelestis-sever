@@ -21,6 +21,7 @@ class ObjectTypeController {
 
     public routes() {
         this.router.get( '/', this.getObjectTypes );
+        this.router.get( "/:id", this.getObjectTypeById );
         this.router.post( '/', this.createObjectType );
         this.router.delete( '/', this.deleteObjectType );
         this.router.put( "/propdefs/add", this.addPropertyDef );
@@ -35,6 +36,16 @@ class ObjectTypeController {
             .then( (objectTypes) => res.send( { success: true, objectTypes } ) )
             .catch( next );
 
+    }
+
+
+
+    public getObjectTypeById(req: Request, res: Response, next: NextFunction) {
+        const { id } = req.params;
+
+        ObjectType.findById( id )
+            .then( (objectType) => res.send( { success: true, objectType } ) )
+            .catch( next );
     }
 
 
