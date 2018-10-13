@@ -23,6 +23,7 @@ class PropertyDefController {
         this.router.get( '/', this.getPropertyDefs );
         this.router.post( '/', this.createPropertyDef );
         this.router.delete( "/:id", this.deletePropertyDef );
+        this.router.put( "/required/", this.setPropertyDefRequired );
     }
 
 
@@ -59,6 +60,21 @@ class PropertyDefController {
         PropertyDef.find({})
             .then( (propertyDefs) => res.send( { success: true, properties: propertyDefs } ) )
             .catch( next );
+
+    }
+
+
+    public setPropertyDefRequired(req: Request, res: Response, next: NextFunction) {
+
+        const { objectType, propertyDef } = req.body;
+
+        console.log( "required request for propertyDef: " + propertyDef + "|| object type: " + objectType );
+
+
+        PropertyDef.findByIdAndUpdate( propertyDef, { $push: { requiredFor: objectType } } )
+            .then( () => res.send( { success: true, message: `Property def has been set required for object type  ${ objectType }` } ) )
+            .catch( next );
+
 
     }
 

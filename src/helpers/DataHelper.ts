@@ -87,7 +87,6 @@ class DataHelper {
         });
 
 
-
         Promise.all([
             title.save(),
             description.save(),

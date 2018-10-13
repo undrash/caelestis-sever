@@ -44,7 +44,7 @@ class ObjectTypeController {
 
         const objectType = new ObjectType({
             name,
-            propertyDefs
+            properties: propertyDefs
         });
 
         objectType.save()
