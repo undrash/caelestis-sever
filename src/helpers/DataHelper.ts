@@ -42,6 +42,7 @@ class DataHelper {
 
         const warehouse = new ObjectType({
             name: "Warehouse",
+            nameProperty: title._id,
             properties: [ title._id, description._id  ]
         });
 
@@ -49,18 +50,6 @@ class DataHelper {
         const serialNumber = new PropertyDef({
             name: "Serial Number",
             dataType: DataTypes.TEXT
-        });
-
-
-        const responsiblePerson = new PropertyDef({
-            name: "Responpible Person",
-            dataType: DataTypes.LOOKUP
-        });
-
-
-        const equipment = new ObjectType({
-            name: "Equipment",
-            properties: [ title._id, description._id, serialNumber._id, responsiblePerson._id ]
         });
 
 
@@ -81,10 +70,20 @@ class DataHelper {
             dataType: DataTypes.TEXT
         });
 
+
         const person = new ObjectType({
             name: "Person",
+            nameProperty: firstName._id,
             properties: [ firstName._id, lastName._id, position._id ]
         });
+
+
+        const equipment = new ObjectType({
+            name: "Equipment",
+            nameProperty: title._id,
+            properties: [ title._id, description._id, serialNumber._id ]
+        });
+
 
 
         Promise.all([
@@ -92,7 +91,6 @@ class DataHelper {
             description.save(),
             warehouse.save(),
             serialNumber.save(),
-            responsiblePerson.save(),
             equipment.save(),
             firstName.save(),
             lastName.save(),

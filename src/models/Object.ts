@@ -10,14 +10,15 @@ import PropertyValueSchema from "./PropertyValue";
 
 const ObjectSchema = new Schema({
 
-    name: {
-        type: String,
-        required: true
-    },
-
     type: {
         type: Schema.Types.ObjectId,
         ref: "ObjectType",
+        required: true
+    },
+
+    nameProperty: {
+        type: Schema.Types.ObjectId,
+        ref: "PropertyDef",
         required: true
     },
 

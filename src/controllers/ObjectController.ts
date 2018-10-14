@@ -105,16 +105,13 @@ class ObjectController {
 
                 objectType = objectType as IObjectType;
 
-                const objectNameProp = objectType.nameProperty;
-                let objectName = "empty";
+                const nameProperty = objectType.nameProperty;
 
-                const object = new Object( { type } );
+                const object = new Object( { type, nameProperty } );
 
                 for ( let i = 0; i < properties.length; i++ ) {
 
-                    if ( objectNameProp === properties[i].id ) objectName = properties[i].value;
-
-                    let name: string = properties[i].name;
+                    let name: string = properties[i].nameProperty;
                     let dataType: number = properties[i].dataType;
                     let propertyDef: Schema.Types.ObjectId = properties[i].propertyDef;
                     let value: Schema.Types.Mixed = properties[i].value;
@@ -128,8 +125,6 @@ class ObjectController {
                     });
 
                 }
-
-                object.name = objectName;
 
                 // TODO beforeCreateObject
 
