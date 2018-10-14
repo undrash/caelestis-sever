@@ -5,6 +5,7 @@ import {Schema, model, Types, Model} from "mongoose";
 import { IPropertyDef } from "./interfaces/IPropertyDef";
 import ObjectType from "./ObjectType";
 import Object from "./Object";
+import {DataTypes} from "../constants/DataTypes";
 
 
 
@@ -43,9 +44,15 @@ const PropertyDefSchema = new Schema({
 PropertyDefSchema.pre( "save", function (next) {
     const self = this as IPropertyDef;
 
-    if ( ! self.objectType ) next();
+    if ( self.dataType !== DataTypes.LOOKUP  ) next();
 
-    if ( ! /^[a-fA-F0-9]{24}$/.test( self.objectType ) ) {
+
+    if ( ! self.objectType ) {
+        next( new Error( "Property of type LOOKUP requires an object type associated" ) );
+    }
+
+
+    if ( ! /^[a-fA-F0-9]{24}$/.test( self.objectType.toString() ) ) {
         next( new Error( "Invalid id provided for object type, when creating a property definition." ) );
     }
 

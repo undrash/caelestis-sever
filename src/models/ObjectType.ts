@@ -21,6 +21,13 @@ const ObjectTypeSchema = new Schema({
     },
 
 
+    nameProperty: {
+        type: Schema.Types.ObjectId,
+        ref: "PropertyDef",
+        required: true
+    },
+
+
     properties: {
         type: [ Schema.Types.ObjectId ],
         ref: "PropertyDef",

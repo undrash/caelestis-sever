@@ -5,6 +5,8 @@ import { Router, Request, Response, NextFunction } from "express";
 import Object from "../models/Object";
 import { Schema } from "mongoose";
 import { IPropertyValue } from "../models/interfaces/IPropertyValue";
+import ObjectType from "../models/ObjectType";
+import {IObjectType} from "../models/interfaces/IObjectType";
 
 
 
@@ -98,37 +100,49 @@ class ObjectController {
         const { type, properties } = req.body;
 
 
-        const object = new Object( { type } );
+        ObjectType.findById( type )
+            .then( (objectType ) => {
+
+                objectType = objectType as IObjectType;
+
+                const objectNameProp = objectType.nameProperty;
+                let objectName = "empty";
+
+                const object = new Object( { type } );
+
+                for ( let i = 0; i < properties.length; i++ ) {
+
+                    if ( objectNameProp === properties[i].id ) objectName = properties[i].value;
+
+                    let name: string = properties[i].name;
+                    let dataType: number = properties[i].dataType;
+                    let propertyDef: Schema.Types.ObjectId = properties[i].propertyDef;
+                    let value: Schema.Types.Mixed = properties[i].value;
 
 
-        for ( let i = 0; i < properties.length; i++ ) {
+                    object.properties.push(<IPropertyValue>{
+                        name,
+                        dataType,
+                        propertyDef,
+                        value
+                    });
 
-            let name: string = properties[i].name;
-            let dataType: number = properties[i].dataType;
-            let propertyDef: Schema.Types.ObjectId = properties[i].propertyDef;
-            let value: Schema.Types.Mixed = properties[i].value;
+                }
 
+                object.name = objectName;
 
-            object.properties.push(<IPropertyValue>{
-                name,
-                dataType,
-                propertyDef,
-                value
+                // TODO beforeCreateObject
+
+                object.save()
+                    .then( () => {
+
+                        // TODO afterCreateObject
+
+                        res.send( { success: true, object, message: "" } );
+
+                    })
+                    .catch( next );
             });
-
-        }
-
-        // TODO beforeCreateObject
-
-        object.save()
-            .then( () => {
-
-                // TODO afterCreateObject
-
-                res.send( { success: true, object, message: "" } );
-
-            })
-            .catch( next );
     }
 
 

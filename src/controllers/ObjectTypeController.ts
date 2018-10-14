@@ -51,10 +51,11 @@ class ObjectTypeController {
 
 
     public createObjectType(req: Request, res: Response, next: NextFunction) {
-        const { name, propertyDefs } = req.body;
+        const { name, nameProperty, propertyDefs } = req.body;
 
         const objectType = new ObjectType({
             name,
+            nameProperty,
             properties: propertyDefs
         });
 
