@@ -69,7 +69,7 @@ class PropertyDefController {
         const { id } = req.params;
 
         PropertyDef.findById( id )
-            .then( (objectType) => res.send( { success: true, objectType } ) )
+            .then( (propertyDef) => res.send( { success: true, propertyDef } ) )
             .catch( next );
     }
 
