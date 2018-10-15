@@ -7,6 +7,9 @@ import { Schema } from "mongoose";
 import { IPropertyValue } from "../models/interfaces/IPropertyValue";
 import ObjectType from "../models/ObjectType";
 import {IObjectType} from "../models/interfaces/IObjectType";
+import PropertyDef from "../models/PropertyDef";
+import {IPropertyDef} from "../models/interfaces/IPropertyDef";
+import {ValidationHelper} from "../helpers/ValidationHelper";
 
 
 
@@ -97,47 +100,137 @@ class ObjectController {
 
 
     public createObject(req: Request, res: Response, next: NextFunction) {
+
+        /** PROTOCOL EXAMPLE
+         * {
+                "type":"5bc346320faf484be056fb90",
+                "properties":[
+                    {
+                        "propertyDef":"5bc346320faf484be056fb8d",
+                        "value":"John"
+                    },
+                    {
+                        "propertyDef":"5bc346320faf484be056fb8e",
+                        "value":"Doe"
+                    },
+                    {
+                        "propertyDef":"5bc346320faf484be056fb8f",
+                        "value":"Director"
+                    }
+                ]
+            }
+         *
+         * type: id of ObjectType
+         * propertyDef: id of PropertyDef
+         *
+         * */
+
+
         const { type, properties } = req.body;
 
+        let ot = null;
+        let nameProperty = null;
 
         ObjectType.findById( type )
-            .then( (objectType ) => {
+            .then( (objectType): any => {
 
                 objectType = objectType as IObjectType;
 
-                const nameProperty = objectType.nameProperty;
-
-                const object = new Object( { type, nameProperty } );
-
-                for ( let i = 0; i < properties.length; i++ ) {
-
-                    let name: string = properties[i].nameProperty;
-                    let dataType: number = properties[i].dataType;
-                    let propertyDef: Schema.Types.ObjectId = properties[i].propertyDef;
-                    let value: Schema.Types.Mixed = properties[i].value;
-
-
-                    object.properties.push(<IPropertyValue>{
-                        name,
-                        dataType,
-                        propertyDef,
-                        value
-                    });
-
+                if ( ! objectType ) {
+                    res.send( { success: false, message: "Invalid object type specified at object creation" } );
+                    return;
                 }
 
-                // TODO beforeCreateObject
+                ot = objectType;
+                nameProperty = objectType.nameProperty;
+
+
+                return PropertyDef.find( { _id: { $in: objectType.properties } } );
+            })
+            .then( (objectTypeProps) => {
+
+                objectTypeProps = objectTypeProps as [ IPropertyDef ];
+
+                /** Validate required properties */
+
+                for ( let prop of objectTypeProps ) {
+
+                    if ( prop.requiredFor.includes( type ) ) {
+
+                        for ( let p of properties ) {
+
+                            if ( p.propertyDef === prop._id ) {
+
+                                if ( p.value == null || p.value == "" ) {
+
+                                    res.send( { success: false, message: prop.name + " is a required property for objects of type " + ot.name } );
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                /** Create object */
+
+                let object = new Object( { type, nameProperty } );
+                let propertyValues = [];
+
+
+                /** Populate properties */
+
+                for ( let prop of objectTypeProps ) {
+
+                    console.log( properties );
+                    console.log( prop );
+                    console.log( prop._id );
+
+
+                    let propVal = properties.filter( p => p.propertyDef === prop._id.toString() )[0];
+
+                    console.log( propVal );
+
+
+                    if ( ! propVal ) propVal = { propertyDef: prop._id, value: "" };
+
+                    /** Validate property value against the data type */
+
+                    if ( propVal.value !== "" && propVal.value != null ) {
+
+                        if ( ! ValidationHelper.validatePropertyValueForDataType( propVal.value, prop.dataType  ) ) {
+
+                            res.send( { success: false, message: "Invalid value " + propVal.value + " for property " + prop.name } );
+                            return;
+
+                        }
+                    }
+
+
+                    propertyValues.push({
+                        name: prop.name,
+                        dataType: prop.dataType,
+                        propertyDef: prop._id,
+                        value: propVal.value
+                    });
+                }
+
+
+                object.properties = propertyValues;
+
 
                 object.save()
                     .then( () => {
-
-                        // TODO afterCreateObject
 
                         res.send( { success: true, object, message: "" } );
 
                     })
                     .catch( next );
-            });
+
+
+            })
+            .catch( next );
+
+
     }
 
 
