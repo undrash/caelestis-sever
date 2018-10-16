@@ -260,37 +260,6 @@ class ObjectController {
         Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( req.body ) )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
-
-        // Condition types: Equals, Not Equals, Contains
-
-        // Search for Object where Position ( propdef 5bbb937a235fd73ee828b96e ) equals Director
-
-        // const propertyDef1: string = "5bbb937a235fd73ee828b96e";
-        // const value1: any = "Director";
-        //
-        // const propertyDef2: string = "5bbb937a235fd73ee828b96d";
-        // const value2: any = "Smith";
-        //
-        //
-        // Object.find( { $and: [
-        //     { "properties": { $elemMatch: { propertyDef: propertyDef1, value: value1 } } },
-        //     { "properties": { $elemMatch: { propertyDef: propertyDef2, value: value2 } } }
-        //     ]})
-        //     .then( (objects) => res.send( { success: true, objects } ) )
-        //     .catch( next );
-
-        
-    }
-
-
-
-
-
-    private validateValueForProperty(value: any, type: number): boolean {
-
-        // Input the value for the type
-
-        return true;
     }
 
 }
