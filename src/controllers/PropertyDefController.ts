@@ -114,44 +114,10 @@ class PropertyDefController {
                     .then( (promises) => {
                         return Promise.all( promises );
                     })
-                    .then( (result) => res.send( { success: true, objectsUpdated: result.length } ) )
+                    .then( (results) => res.send( { success: true, objectsUpdated: results.length } ) )
                     .catch( next );
 
             });
-
-
-        // Object.find( { "properties.propertyDef": id }, { "properties.name": 1, "properties.propertyDef": 1 },  )
-        //     .then( (objects) => {
-        //
-        //         return objects.map( (object) => {
-        //
-        //             object.properties.forEach( (propVal) => {
-        //                 if ( propVal.propertyDef.toString() === id ) propVal.name = name;
-        //             });
-        //
-        //
-        //             return object.save();
-        //         })
-        //
-        //     })
-        //     .then( (promises) => {
-        //         return Promise.all( promises );
-        //     })
-        //     .then( (result) => res.send( { result } ) )
-        //     .catch( next );
-
-
-        // Object.find( { "properties.propertyDef": id } )
-        //     .then( (objects) => res.send( { objects } ) )
-        //     .catch( next );
-
-
-        // PropertyDef.findByIdAndUpdate( id, { name } )
-        //     .then( (propertyDef) => {
-        //
-        //
-        //
-        //     });
     }
 
 }
