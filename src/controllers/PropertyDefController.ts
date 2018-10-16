@@ -3,7 +3,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 
 import PropertyDef from "../models/PropertyDef";
-
+import Object from "../models/Object";
 
 
 
@@ -25,6 +25,7 @@ class PropertyDefController {
         this.router.post( '/', this.createPropertyDef );
         this.router.delete( "/:id", this.deletePropertyDef );
         this.router.put( "/required/", this.setPropertyDefRequired );
+        this.router.put( "/edit/", this.editPropertyDefName );
     }
 
 
@@ -85,6 +86,72 @@ class PropertyDefController {
             .catch( next );
 
 
+    }
+
+
+
+    public editPropertyDefName(req: Request, res: Response, next: NextFunction) {
+        const { id, name } = req.body;
+
+
+        PropertyDef.findByIdAndUpdate( id, { name } )
+            .then( () => {
+
+                Object.find( { "properties.propertyDef": id }, { "properties.name": 1, "properties.propertyDef": 1 },  )
+                    .then( (objects) => {
+
+                        return objects.map( (object) => {
+
+                            object.properties.forEach( (propVal) => {
+                                if ( propVal.propertyDef.toString() === id ) propVal.name = name;
+                            });
+
+
+                            return object.save();
+                        })
+
+                    })
+                    .then( (promises) => {
+                        return Promise.all( promises );
+                    })
+                    .then( (result) => res.send( { success: true, objectsUpdated: result.length } ) )
+                    .catch( next );
+
+            });
+
+
+        // Object.find( { "properties.propertyDef": id }, { "properties.name": 1, "properties.propertyDef": 1 },  )
+        //     .then( (objects) => {
+        //
+        //         return objects.map( (object) => {
+        //
+        //             object.properties.forEach( (propVal) => {
+        //                 if ( propVal.propertyDef.toString() === id ) propVal.name = name;
+        //             });
+        //
+        //
+        //             return object.save();
+        //         })
+        //
+        //     })
+        //     .then( (promises) => {
+        //         return Promise.all( promises );
+        //     })
+        //     .then( (result) => res.send( { result } ) )
+        //     .catch( next );
+
+
+        // Object.find( { "properties.propertyDef": id } )
+        //     .then( (objects) => res.send( { objects } ) )
+        //     .catch( next );
+
+
+        // PropertyDef.findByIdAndUpdate( id, { name } )
+        //     .then( (propertyDef) => {
+        //
+        //
+        //
+        //     });
     }
 
 }
