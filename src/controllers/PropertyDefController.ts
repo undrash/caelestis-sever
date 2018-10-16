@@ -65,6 +65,7 @@ class PropertyDefController {
     }
 
 
+
     public getPropertyDefById(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
 
@@ -74,12 +75,10 @@ class PropertyDefController {
     }
 
 
+
     public setPropertyDefRequired(req: Request, res: Response, next: NextFunction) {
 
         const { objectType, propertyDef } = req.body;
-
-        console.log( "required request for propertyDef: " + propertyDef + "|| object type: " + objectType );
-
 
         PropertyDef.findByIdAndUpdate( propertyDef, { $push: { requiredFor: objectType } } )
             .then( () => res.send( { success: true, message: `Property def has been set required for object type  ${ objectType }` } ) )

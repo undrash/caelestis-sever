@@ -1,10 +1,10 @@
 
 
 import { Schema, model } from "mongoose";
-
 import { IObject } from "./interfaces/IObject";
-
 import PropertyValueSchema from "./PropertyValue";
+
+
 
 
 

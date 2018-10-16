@@ -3,16 +3,12 @@
 import { Router, Request, Response, NextFunction } from "express";
 
 import Object from "../models/Object";
-import { Schema } from "mongoose";
-import { IPropertyValue } from "../models/interfaces/IPropertyValue";
 import ObjectType from "../models/ObjectType";
 import {IObjectType} from "../models/interfaces/IObjectType";
 import PropertyDef from "../models/PropertyDef";
 import {IPropertyDef} from "../models/interfaces/IPropertyDef";
 import {ValidationHelper} from "../helpers/ValidationHelper";
 import {ObjectSearchHelper} from "../helpers/ObjectSearchHelper";
-
-
 
 
 
@@ -84,14 +80,12 @@ class ObjectController {
         Object.find()
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
-
     }
 
 
 
     public getObjectsByType(req: Request, res: Response, next: NextFunction){
         const type: string = req.params.id;
-
 
         Object.find( { type })
             .then( (objects) => res.send( { success: true, objects } ) )

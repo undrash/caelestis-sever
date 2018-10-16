@@ -3,7 +3,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import * as mongoose from "mongoose";
 import PropertyDef from "../models/PropertyDef";
-import {DataTypes} from "../constants/DataTypes";
+import { DataTypes } from "../constants/DataTypes";
 import ObjectType from "../models/ObjectType";
 
 

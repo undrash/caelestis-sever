@@ -24,13 +24,11 @@ const PropertyValueSchema = new Schema({
         required: true
     },
 
-
     propertyDef: {
        type: Schema.Types.ObjectId,
         ref: "PropertyDef",
         required: true
     },
-
 
     value: Schema.Types.Mixed
 

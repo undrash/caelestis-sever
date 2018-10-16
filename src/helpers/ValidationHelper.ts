@@ -1,8 +1,10 @@
 
 
-
-
 import {DataTypes} from "../constants/DataTypes";
+
+
+
+
 
 export class ValidationHelper {
 
@@ -11,11 +13,13 @@ export class ValidationHelper {
     }
 
 
+
     public static isObjectIdValid(id: string): boolean {
 
         return /^[a-fA-F0-9]{24}$/.test( id );
 
     }
+
 
 
     public static arrayContainsArray(superSet: any[], subSet: any[]): boolean {
@@ -27,6 +31,7 @@ export class ValidationHelper {
             return ( superSet.indexOf(value) >= 0 );
         });
     }
+
 
 
     public static validatePropertyValueForDataType( propertyValue: any, dataType: number): boolean {

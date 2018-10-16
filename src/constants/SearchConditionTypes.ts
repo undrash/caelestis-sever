@@ -1,5 +1,8 @@
 
 
+
+
+
 export class SearchConditionTypes {
 
     public static readonly EQUAL: number = 1;

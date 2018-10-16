@@ -5,6 +5,7 @@ import { Schema } from "mongoose";
 
 
 
+
 export interface IPropertyValue extends Schema {
     name: string,
     dataType: number,

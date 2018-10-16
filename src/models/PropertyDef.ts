@@ -1,11 +1,11 @@
 
 
-import {Schema, model, Types, Model} from "mongoose";
+import { Schema, model, Types, Model } from "mongoose";
 
 import { IPropertyDef } from "./interfaces/IPropertyDef";
 import ObjectType from "./ObjectType";
 import Object from "./Object";
-import {DataTypes} from "../constants/DataTypes";
+import { DataTypes } from "../constants/DataTypes";
 
 
 
