@@ -73,4 +73,51 @@ export class ValidationHelper {
         return isValid;
 
     }
+
+
+    public static parsePropertyValueBasedOnDataType( propertyValue: any, dataType: number): any {
+
+        let value: any = null;
+
+
+        switch ( dataType ) {
+
+            case DataTypes.TEXT :
+
+                value = propertyValue.toString();
+
+                break;
+
+            case DataTypes.NUMBER :
+
+                value = parseInt( propertyValue );
+
+                break;
+
+            case DataTypes.LOOKUP :
+
+                value = propertyValue.toString();
+
+                break;
+
+            case DataTypes.DATE :
+
+                value = new Date( propertyValue );
+
+                break;
+
+            case DataTypes.BOOLEAN :
+
+                value = JSON.parse( propertyValue );
+
+                break;
+
+            default :
+                break;
+        }
+
+
+        return value;
+
+    }
 }

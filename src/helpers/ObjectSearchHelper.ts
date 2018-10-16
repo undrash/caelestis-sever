@@ -1,6 +1,7 @@
 
 
 import {SearchConditionTypes} from "../constants/SearchConditionTypes";
+import {DataTypes} from "../constants/DataTypes";
 
 export class ObjectSearchHelper {
 
@@ -39,24 +40,50 @@ export class ObjectSearchHelper {
 
                     case SearchConditionTypes.EQUAL :
 
-                        query[ "$and" ].push(
-                            {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: condition.value } }
-                            }
+                        if ( condition.dataType === DataTypes.DATE ) {
 
-                        );
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: new Date( condition.value ) } }
+                                }
+
+                            );
+
+                        } else {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value:  condition.value  } }
+                                }
+
+                            );
+
+                        }
 
                         break;
 
 
                     case SearchConditionTypes.NOT_EQUAL :
 
-                        query[ "$and" ].push(
-                            {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $ne: condition.value } } }
-                            }
+                        if ( condition.dataType === DataTypes.DATE ) {
 
-                        );
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $ne: new Date( condition.value ) } } }
+                                }
+
+                            );
+
+                        } else {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $ne: condition.value } } }
+                                }
+
+                            );
+
+                        }
 
                         break;
 
@@ -87,48 +114,99 @@ export class ObjectSearchHelper {
 
                     case SearchConditionTypes.LESS_THAN :
 
-                        query[ "$and" ].push(
-                            {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $lt : condition.value } } }
-                            }
+                        if ( condition.dataType === DataTypes.DATE ) {
 
-                        );
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $lt : new Date( condition.value ) } } }
+                                }
+                            );
+
+                        } else {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $lt : condition.value } } }
+                                }
+
+                            );
+
+                        }
 
                         break;
 
 
                     case SearchConditionTypes.LESS_THAN_OR_EQUAL :
 
-                        query[ "$and" ].push(
-                            {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $lte : condition.value } } }
-                            }
+                        if ( condition.dataType === DataTypes.DATE ) {
 
-                        );
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $lte : new Date( condition.value ) } } }
+                                }
+
+                            );
+
+                        } else {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $lte : condition.value } } }
+                                }
+
+                            );
+
+                        }
 
                         break;
 
 
                     case SearchConditionTypes.GREATER_THAN :
 
-                        query[ "$and" ].push(
-                            {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $gt : condition.value } } }
-                            }
+                        if ( condition.dataType === DataTypes.DATE ) {
 
-                        );
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $gt : new Date( condition.value ) } } }
+                                }
+
+                            );
+
+                        } else {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $gt : condition.value } } }
+                                }
+
+                            );
+
+                        }
 
                         break;
 
 
                     case SearchConditionTypes.GREATER_THAN_OR_EQUAL :
 
-                        query[ "$and" ].push(
-                            {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $gte : condition.value } } }
-                            }
+                        if ( condition.dataType === DataTypes.DATE ) {
 
-                        );
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $gte : new Date( condition.value ) } } }
+                                }
+
+                            );
+
+                        } else {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $gte : condition.value } } }
+                                }
+
+                            );
+
+                        }
 
                         break;
 
@@ -180,11 +258,34 @@ export class ObjectSearchHelper {
 
                     case SearchConditionTypes.ONE_OF :
 
-                        query[ "$and" ].push(
-                            {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $in: condition.value } } }
+                        if ( ! condition.value || ! condition.value.length ) break;
+
+
+                        if ( condition.dataType === DataTypes.DATE ) {
+
+                            let dates: Date[] = [];
+
+                            for ( let date of condition.value ) {
+
+                                dates.push( new Date( date ) );
+
                             }
-                        );
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $in: dates } } }
+                                }
+                            );
+
+                        } else {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $in: condition.value } } }
+                                }
+                            );
+
+                        }
 
                         break;
 
@@ -192,9 +293,7 @@ export class ObjectSearchHelper {
                         break;
 
                 }
-
             }
-
         }
 
 

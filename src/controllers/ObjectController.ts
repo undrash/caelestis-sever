@@ -206,12 +206,15 @@ class ObjectController {
                         }
                     }
 
+                    /** Parse data type */
+
+                    const value: any = ValidationHelper.parsePropertyValueBasedOnDataType( propVal.value, prop.dataType );
 
                     propertyValues.push({
                         name: prop.name,
                         dataType: prop.dataType,
                         propertyDef: prop._id,
-                        value: propVal.value
+                        value: value
                     });
                 }
 
@@ -255,7 +258,27 @@ class ObjectController {
 
 
     public searchForObjectsByConditions(req: Request, res: Response, next: NextFunction) {
-
+        /**
+         *  PROTOCOL:
+         *
+         * {
+                "types": [ "5bc5cde95db4d10498eda24f" ],
+                "conditions": [
+                    {
+                        "propertyDef": "5bc5cdd75db4d10498eda24e",
+                        "operator": 1,
+                        "dataType": 4,
+                        "value": "2018-10-16T00:00:00.000Z"
+                    }
+                ]
+            }
+         *
+         * types: array of Object Type Id's
+         * operator: SearchConditionType ( e.g. EQUAL, NOT EQUAL, CONTAINS, LESS THAN ... )
+         * dataType: DataType ( e.g. TEXT, NUMBER, DATE, BOOLEAN ... )
+         * value: value to compare against, can be of type any ***BUT*** it works in conjunction with the data type
+         *
+         * */
 
         Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( req.body ) )
             .then( (objects) => res.send( { success: true, objects } ) )
