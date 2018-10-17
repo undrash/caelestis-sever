@@ -125,6 +125,7 @@ class ObjectController {
 
         let ot = null;
         let nameProperty = null;
+        let typeName = null;
 
         ObjectType.findById( type )
             .then( (objectType): any => {
@@ -138,6 +139,7 @@ class ObjectController {
 
                 ot = objectType;
                 nameProperty = objectType.nameProperty;
+                typeName = objectType.name;
 
 
                 return PropertyDef.find( { _id: { $in: objectType.properties } } );
@@ -168,7 +170,7 @@ class ObjectController {
 
                 /** Create object */
 
-                let object = new Object( { type, nameProperty } );
+                let object = new Object( { type, typeName, nameProperty } );
                 let propertyValues = [];
 
 

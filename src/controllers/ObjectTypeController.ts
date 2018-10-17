@@ -3,6 +3,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 
 import ObjectType from "../models/ObjectType";
+import PropertyDef from "../models/PropertyDef";
 
 
 
@@ -51,15 +52,21 @@ class ObjectTypeController {
 
 
     public createObjectType(req: Request, res: Response, next: NextFunction) {
-        const { name, nameProperty, propertyDefs } = req.body;
+        const { name, nameProperty, properties } = req.body;
+
+        const propertyIds = properties.map( p => p.id );
+        const requiredProperties = properties.filter( p => p.required === true ).map( p => p.id );
 
         const objectType = new ObjectType({
             name,
             nameProperty,
-            properties: propertyDefs
+            properties: propertyIds
         });
 
         objectType.save()
+            .then( () => {
+                return PropertyDef.update( { _id: { $in: requiredProperties } }, { $addToSet: { requiredFor: objectType._id } } )
+            })
             .then( () => res.send( { success: true, objectType, message: "Object type successfully created." } ) )
             .catch( next );
     }
@@ -78,7 +85,14 @@ class ObjectTypeController {
 
     public editObjectType(req: Request, res: Response, next: NextFunction) {
 
-        
+        const { id, name, nameProperty, properties } = req.body;
+
+        ObjectType.findById( id )
+            .populate( "properties" )
+            .then( (objectType) => {
+
+            })
+
 
     }
 
