@@ -16,12 +16,6 @@ const ObjectSchema = new Schema({
         required: true
     },
 
-    nameProperty: {
-        type: Schema.Types.ObjectId,
-        ref: "PropertyDef",
-        required: true
-    },
-
     properties: {
         type: [ PropertyValueSchema ],
         default: []

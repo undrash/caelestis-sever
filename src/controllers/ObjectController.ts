@@ -79,7 +79,7 @@ class ObjectController {
 
         Object.find()
             .populate("properties.propertyDef", "requiredFor" )
-            .populate("type", "name" )
+            .populate("type", "name nameProperty" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
     }
@@ -91,7 +91,7 @@ class ObjectController {
 
         Object.find( { type })
             .populate("properties.propertyDef", "requiredFor" )
-            .populate("type", "name" )
+            .populate("type", "name nameProperty" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
     }
@@ -221,9 +221,13 @@ class ObjectController {
 
 
                 object.save()
-                    .then( () => {
+                    .then( (object) => {
 
-                        res.send( { success: true, object, message: "" } );
+                        object
+                            .populate( "properties.propertyDef", "requiredFor" )
+                            .populate("type", "name nameProperty" )
+                            .execPopulate()
+                            .then( () => res.send( { success: true, object, message: "" } ) );
 
                     })
                     .catch( next );
@@ -280,7 +284,7 @@ class ObjectController {
 
         Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( req.body ) )
             .populate("properties.propertyDef", "requiredFor" )
-            .populate("type", "name" )
+            .populate("type", "name nameProperty" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
     }
