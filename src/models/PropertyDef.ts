@@ -33,10 +33,7 @@ const PropertyDefSchema = new Schema({
         ref: "ObjectType"
     },
 
-    requiredFor: {
-        type: [ Schema.Types.ObjectId ],
-        ref: "ObjectType"
-    }
+    requiredFor: [ { type: Schema.Types.ObjectId, ref: "ObjectType" } ]
 
 });
 

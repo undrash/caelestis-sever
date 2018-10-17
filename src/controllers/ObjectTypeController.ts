@@ -24,8 +24,7 @@ class ObjectTypeController {
         this.router.get( "/:id", this.getObjectTypeById );
         this.router.post( '/', this.createObjectType );
         this.router.delete( '/', this.deleteObjectType );
-        this.router.put( "/propdefs/add", this.addPropertyDef );
-        this.router.put( "/propdefs/remove", this.removePropertyDef );
+        this.router.put( '/', this.editObjectType )
     }
 
 
@@ -44,6 +43,7 @@ class ObjectTypeController {
         const { id } = req.params;
 
         ObjectType.findById( id )
+            .populate( "properties" )
             .then( (objectType) => res.send( { success: true, objectType } ) )
             .catch( next );
     }
@@ -76,23 +76,12 @@ class ObjectTypeController {
 
 
 
-    public addPropertyDef(req: Request, res: Response, next: NextFunction) {
-        const { objectId, propertyId } = req.body;
+    public editObjectType(req: Request, res: Response, next: NextFunction) {
 
-        ObjectType.findByIdAndUpdate( objectId, { $addToSet: { properties: [ propertyId ] } } )
-            .then( () => res.send( { success: true, message: "Property definition successfully added to object." } ) )
-            .catch( next );
+        
+
     }
 
-
-
-    public removePropertyDef(req: Request, res: Response, next: NextFunction) {
-        const { objectId, propertyId } = req.body;
-
-        ObjectType.findByIdAndUpdate( objectId, { $pull: { properties: [ propertyId ] } } )
-            .then( () => res.send( { success: true, message: "Property definition successfully removed from object." } ) )
-            .catch( next );
-    }
 
 }
 

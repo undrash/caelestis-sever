@@ -28,11 +28,7 @@ const ObjectTypeSchema = new Schema({
     },
 
 
-    properties: {
-        type: [ Schema.Types.ObjectId ],
-        ref: "PropertyDef",
-        default: []
-    }
+    properties: [ { type: Schema.Types.ObjectId , ref: "PropertyDef", default: [] } ]
 
 
 });

@@ -79,11 +79,21 @@ class PropertyDefController {
 
     public setPropertyDefRequired(req: Request, res: Response, next: NextFunction) {
 
-        const { objectType, propertyDef } = req.body;
+        const { objectType, propertyDef, required } = req.body;
 
-        PropertyDef.findByIdAndUpdate( propertyDef, { $push: { requiredFor: objectType } } )
-            .then( () => res.send( { success: true, message: `Property def has been set required for object type  ${ objectType }` } ) )
-            .catch( next );
+        if ( required ) {
+
+            PropertyDef.findByIdAndUpdate( propertyDef, { $addToSet: { requiredFor: objectType } } )
+                .then( () => res.send( { success: true, message: `Property def has been set required for object type  ${ objectType }` } ) )
+                .catch( next );
+
+        } else {
+
+            PropertyDef.findByIdAndUpdate( propertyDef, { $pull: { requiredFor: objectType } } )
+                .then( () => res.send( { success: true, message: `Property def has been set as ***NOT** required for object type  ${ objectType }` } ) )
+                .catch( next );
+
+        }
 
 
     }
