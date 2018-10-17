@@ -78,6 +78,8 @@ class ObjectController {
     public getObjects(req: Request, res: Response, next: NextFunction) {
 
         Object.find()
+            .populate("properties.propertyDef", "requiredFor" )
+            .populate("type", "name" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
     }
@@ -88,6 +90,8 @@ class ObjectController {
         const type: string = req.params.id;
 
         Object.find( { type })
+            .populate("properties.propertyDef", "requiredFor" )
+            .populate("type", "name" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
     }
@@ -125,7 +129,6 @@ class ObjectController {
 
         let ot = null;
         let nameProperty = null;
-        let typeName = null;
 
         ObjectType.findById( type )
             .then( (objectType): any => {
@@ -139,7 +142,6 @@ class ObjectController {
 
                 ot = objectType;
                 nameProperty = objectType.nameProperty;
-                typeName = objectType.name;
 
 
                 return PropertyDef.find( { _id: { $in: objectType.properties } } );
@@ -170,7 +172,7 @@ class ObjectController {
 
                 /** Create object */
 
-                let object = new Object( { type, typeName, nameProperty } );
+                let object = new Object( { type, nameProperty } );
                 let propertyValues = [];
 
 
@@ -277,6 +279,8 @@ class ObjectController {
          * */
 
         Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( req.body ) )
+            .populate("properties.propertyDef", "requiredFor" )
+            .populate("type", "name" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
     }

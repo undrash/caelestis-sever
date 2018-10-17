@@ -16,11 +16,6 @@ const ObjectSchema = new Schema({
         required: true
     },
 
-    typeName: {
-        type: String,
-        required: true
-    },
-
     nameProperty: {
         type: Schema.Types.ObjectId,
         ref: "PropertyDef",
