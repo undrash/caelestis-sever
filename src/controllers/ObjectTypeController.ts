@@ -90,7 +90,13 @@ class ObjectTypeController {
         ObjectType.findById( id )
             .populate( "properties" )
             .then( (objectType) => {
+                objectType.name = name;
+                objectType.nameProperty = nameProperty;
 
+                //TODO: find out what propertyDefs changed to required/not required
+                //TODO: update the properties accordingly
+                //TODO: find out which are the new properties/no longer in use
+                //TODO: update the objects accordingly
             })
 
 
