@@ -141,6 +141,7 @@ class ObjectTypeController {
         let addedProperties = []; // Items from the new properties, which are missing from the old set of properties
         let requiredProperties = []; // Items that are marked as required in the new set of properties ***PLUS*** the property marked as name
         let notRequiredProperties = []; // Items that are marked as not required in the new set, and also properties that have been removed
+        let updatedObjectType = null;
 
         ObjectType.findById( id )
             .populate( "properties" )
@@ -173,6 +174,8 @@ class ObjectTypeController {
                 if ( name ) objectType.name = name;
                 objectType.nameProperty     = nameProperty;
                 objectType.properties       = newProperties;
+
+                updatedObjectType = objectType;
 
                 return Promise.all([
                     objectType.save(),
@@ -216,10 +219,10 @@ class ObjectTypeController {
             .then( (promises) => {
                 return Promise.all( promises );
             })
-            .then( (results) => res.send( { success: true, objectsUpdated: results.length } ) )
+            .then( (results) => res.send( { success: true, objectType: updatedObjectType, objectsUpdated: results.length } ) )
             .catch( next );
     }
-    
+
 }
 
 
