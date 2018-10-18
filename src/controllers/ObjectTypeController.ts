@@ -7,6 +7,7 @@ import Object from "../models/Object";
 import PropertyDef from "../models/PropertyDef";
 import {IObjectType} from "../models/interfaces/IObjectType";
 import {IPropertyDef} from "../models/interfaces/IPropertyDef";
+import {ValidationHelper} from "../helpers/ValidationHelper";
 
 
 
@@ -93,6 +94,20 @@ class ObjectTypeController {
         const { id, name, nameProperty, properties } = req.body;
 
         const newProperties = properties.map( p => p.id );
+
+
+        if ( ValidationHelper.arrayHasDuplicates( newProperties ) ) {
+            res.send( { success: false, message: "Duplicate values found in property array provided." } );
+            return;
+        }
+
+        if ( newProperties.indexOf( nameProperty ) < 0 ) {
+            res.send( { success: false, message: "Name property specified is not listed in the properties collection." } );
+            return;
+        }
+
+
+
         let oldProperties = [];
         let removedProperties = [];
         let addedProperties = [];
@@ -103,9 +118,10 @@ class ObjectTypeController {
             .populate( "properties" )
             .then( (objectType) => {
 
-                objectType.name             = name;
-                objectType.nameProperty     = nameProperty;
-                objectType.properties       = newProperties;
+                if ( ! objectType ) {
+                    res.send( { success: false, message: "Object type of id " + id + " was not found." } );
+                    return;
+                }
 
                 oldProperties               = objectType.properties.map( p => (p as any)._id.toString() );
 
@@ -123,9 +139,12 @@ class ObjectTypeController {
                     if ( notRequiredProperties.indexOf( p ) === -1 ) notRequiredProperties.push( p );
                 }
 
-
                 PropertyDef.update({ _id: { $in: notRequiredProperties } }, { $pull: { requiredFor: id } }, { multi: true } );
 
+
+                if ( name ) objectType.name = name;
+                objectType.nameProperty     = nameProperty;
+                objectType.properties       = newProperties;
 
                 return Promise.all([
                     objectType.save(),
@@ -149,8 +168,8 @@ class ObjectTypeController {
 
                     for ( let property of object.properties ) {
 
-                        if ( removedProperties.indexOf( property.propertyDef ) > -1 ) {
-                            object.properties.$pull( property._id );
+                        if ( removedProperties.indexOf( property.propertyDef.toString() ) > -1 ) {
+                            object.properties.pull( property._id );
                         }
                     }
 

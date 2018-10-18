@@ -34,6 +34,23 @@ export class ValidationHelper {
 
 
 
+    public static arrayHasDuplicates(array: string[]): boolean {
+
+        let valuesSoFar = Object.create( null );
+
+        for ( let i = 0; i < array.length; ++i ) {
+            const value = array[i];
+
+            if ( value in valuesSoFar ) return true;
+
+            valuesSoFar[ value ] = true;
+        }
+
+        return false;
+    }
+
+
+
     public static validatePropertyValueForDataType( propertyValue: any, dataType: number): boolean {
 
         let isValid = false;
@@ -78,6 +95,7 @@ export class ValidationHelper {
         return isValid;
 
     }
+
 
 
     public static parsePropertyValueBasedOnDataType( propertyValue: any, dataType: number): any {
