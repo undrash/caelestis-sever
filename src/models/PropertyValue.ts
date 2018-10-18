@@ -1,7 +1,6 @@
 
 
 import { Schema } from "mongoose";
-
 import { IPropertyValue } from "./interfaces/IPropertyValue";
 
 

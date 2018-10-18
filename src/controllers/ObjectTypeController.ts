@@ -5,8 +5,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import ObjectType from "../models/ObjectType";
 import Object from "../models/Object";
 import PropertyDef from "../models/PropertyDef";
-import {IObjectType} from "../models/interfaces/IObjectType";
-import {IPropertyDef} from "../models/interfaces/IPropertyDef";
 import {ValidationHelper} from "../helpers/ValidationHelper";
 
 
@@ -90,6 +88,36 @@ class ObjectTypeController {
 
 
     public editObjectType(req: Request, res: Response, next: NextFunction) {
+        /**
+         * PROTOCOL EXAMPLE
+         * {
+                "id": "5bc8542dc4d555461c9c53cb",
+                "name": "OBJECT TYPE NAME",
+                "nameProperty": "5bc85007c4d555461c9c53bf",
+                "properties": [
+                  {
+                      "id": "5bc85007c4d555461c9c53bf",
+                      "required": true
+                  },
+                  {
+                      "id": "5bc85408c4d555461c9c53c9",
+                      "required": true
+                  },
+                  {
+                      "id": "5bc85007c4d555461c9c53c0",
+                      "required": true
+                  }
+              ]
+
+            }
+         *
+         * id                   - document id of the Object Type
+         * nameProperty         - which property from the collection will act as a name
+         * properties.id        - document id of the PropertyDef
+         * properties.required  - is it required for this object type
+         *
+         * */
+
 
         const { id, name, nameProperty, properties } = req.body;
 
@@ -108,11 +136,11 @@ class ObjectTypeController {
 
 
 
-        let oldProperties = [];
-        let removedProperties = [];
-        let addedProperties = [];
-        let requiredProperties = [];
-        let notRequiredProperties = [];
+        let oldProperties = []; // Initial properties of the Object Type before edit
+        let removedProperties = []; // Items from the old properties, which are missing from the new set of properties
+        let addedProperties = []; // Items from the new properties, which are missing from the old set of properties
+        let requiredProperties = []; // Items that are marked as required in the new set of properties ***PLUS*** the property marked as name
+        let notRequiredProperties = []; // Items that are marked as not required in the new set, and also properties that have been removed
 
         ObjectType.findById( id )
             .populate( "properties" )
@@ -190,10 +218,8 @@ class ObjectTypeController {
             })
             .then( (results) => res.send( { success: true, objectsUpdated: results.length } ) )
             .catch( next );
-
     }
-
-
+    
 }
 
 
