@@ -26,35 +26,35 @@ class ObjectController {
 
     public routes() {
         this.router.post( "/search", this.searchForObjectsByConditions );
-        this.router.post( "/properties", this.setProperties );
         this.router.get( "/type/:id", this.getObjectsByType );
         this.router.delete( "/:id", this.deleteObject );
         this.router.get( "/:id", this.getObjectById );
         this.router.post( '/', this.createObject );
         this.router.get( '/', this.getObjects );
+        this.router.put( '/', this.editObject );
     }
 
 
 
-    public setProperties(req: Request, res: Response, next: NextFunction) {
+    public editObject(req: Request, res: Response, next: NextFunction) {
 
-        const { Id, Properties } = req.body;
+        const { id, properties } = req.body;
 
-        Object.findById( { _id: Id } )
+        Object.findById( { _id: id } )
             .then( (object) => {
 
                 if ( ! object ) {
-                    res.send( { success: false, message: "Object of id " + Id + " not found." } );
+                    res.send( { success: false, message: "Object of id " + id + " not found." } );
                     return;
                 }
 
-                for ( let i = 0; i < Properties.length; i++ ) {
+                for ( let i = 0; i < properties.length; i++ ) {
 
                     for ( let j = 0; j < object.properties.length; j++ ) {
 
-                        if ( Properties[i].Id == ( object.properties[j] as any )._id ) {
+                        if ( properties[i].id == ( object.properties[j] as any )._id ) {
 
-                            object.properties[j].value = Properties[i].Value;
+                            object.properties[j].value = properties[i].value;
                             break;
                         }
                     }
