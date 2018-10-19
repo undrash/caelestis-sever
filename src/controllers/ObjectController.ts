@@ -29,6 +29,7 @@ class ObjectController {
         this.router.post( "/properties", this.setProperties );
         this.router.get( "/type/:id", this.getObjectsByType );
         this.router.delete( "/:id", this.deleteObject );
+        this.router.get( "/:id", this.getObjectById );
         this.router.post( '/', this.createObject );
         this.router.get( '/', this.getObjects );
     }
@@ -85,6 +86,16 @@ class ObjectController {
     }
 
 
+
+    public getObjectById(req: Request, res: Response, next: NextFunction) {
+        const { id } = req.params;
+
+        Object.findById( id )
+            .then( (object) => res.send( { success: true, object } ) )
+            .catch( next );
+    }
+
+    
 
     public getObjectsByType(req: Request, res: Response, next: NextFunction){
         const type: string = req.params.id;
