@@ -91,11 +91,13 @@ class ObjectController {
         const { id } = req.params;
 
         Object.findById( id )
+            .populate("properties.propertyDef", "requiredFor" )
+            .populate("type", "name nameProperty" )
             .then( (object) => res.send( { success: true, object } ) )
             .catch( next );
     }
 
-    
+
 
     public getObjectsByType(req: Request, res: Response, next: NextFunction){
         const type: string = req.params.id;
