@@ -40,38 +40,104 @@ class ObjectController {
 
         const { id, properties } = req.body;
 
-        Object.findById( { _id: id } )
+
+        Object.findById( id )
+            .populate( "type" )
+            .populate("properties.propertyDef" )
             .then( (object) => {
 
-                if ( ! object ) {
-                    res.send( { success: false, message: "Object of id " + id + " not found." } );
-                    return;
+                object = object as any;
+                const objectType = object.type as any;
+
+                let objectTypeProperties = [];
+
+                for ( let propId of objectType.properties ) {
+                    objectTypeProperties.push( propId.toString() );
                 }
 
-                for ( let i = 0; i < properties.length; i++ ) {
+                let filteredProperties = [];
 
-                    for ( let j = 0; j < object.properties.length; j++ ) {
+                for ( let p of properties ) {
+                    if ( objectTypeProperties.indexOf( p.propertyDef ) > -1 ) filteredProperties.push( p );
+                }
 
-                        if ( properties[i].id == ( object.properties[j] as any )._id ) {
 
-                            object.properties[j].value = properties[i].value;
-                            break;
+                let propertyDefinitions = [];
+
+                for ( let prop of object.properties ) {
+                    propertyDefinitions.push( prop.propertyDef );
+                }
+
+
+                /** Validating required properties */
+
+                for ( let prop of propertyDefinitions ) {
+
+                    if ( (prop as IPropertyDef).requiredFor.indexOf( objectType._id ) > -1) {
+
+                        for ( let p of filteredProperties ) {
+
+                            if ( p.propertyDef === (prop as IPropertyDef)._id.toString() ) {
+
+                                if ( p.value == null || p.value == "" ) {
+
+                                    res.send( { success: false, message: (prop as any).name + " is a required property for objects of type " + ( object.type as any).name } );
+                                    return;
+
+                                }
+                            }
                         }
                     }
                 }
 
-                // TODO beforeEditObject
+
+
+                for ( let prop of propertyDefinitions ) {
+
+                    let propVal = filteredProperties.filter( p => p.propertyDef === prop._id.toString() )[0];
+
+                    if ( ! propVal ) propVal = { propertyDef: prop._id.toString(), value: "" };
+
+                    /** Validate property value against the data type */
+
+                    if ( propVal.value !== "" && propVal.value != null ) {
+
+                        if ( ! ValidationHelper.validatePropertyValueForDataType( propVal.value, prop.dataType  ) ) {
+
+                            res.send( { success: false, message: "Invalid value " + propVal.value + " for property " + prop.name } );
+                            return;
+
+                        }
+                    }
+
+
+                    /** Parse data type */
+
+                    const value: any = ValidationHelper.parsePropertyValueBasedOnDataType( propVal.value, prop.dataType );
+
+
+                    for ( let i = 0; i < object.properties.length; i++ ) {
+                        if ( propVal.propertyDef === ( object.properties[i].propertyDef as any )._id.toString() ) {
+                            object.properties[i].value = value;
+                            break;
+                        }
+                    }
+
+                }
 
                 return object.save();
 
             })
             .then( (object) => {
 
-                // TODO afterEditObject
-
-                res.send( { success: true, object, message: "Object successfully updated." } );
-            } )
+                object
+                    .populate( "properties.propertyDef", "requiredFor" )
+                    .populate("type", "name nameProperty" )
+                    .execPopulate()
+                    .then( () => res.send( { success: true, object, message: "Object successfully updated." } ) );
+            })
             .catch( next );
+        
     }
 
 
@@ -167,7 +233,7 @@ class ObjectController {
 
                 for ( let prop of objectTypeProps ) {
 
-                    if ( prop.requiredFor.includes( type ) ) {
+                    if ( prop.requiredFor.includes( type ) ) { //TODO double check this. probably works with indexOf instead
 
                         for ( let p of properties ) {
 
