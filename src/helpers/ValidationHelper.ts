@@ -125,7 +125,7 @@ export class ValidationHelper {
 
             case DataTypes.DATE :
 
-                value = new Date( propertyValue );
+                if ( propertyValue ) value = new Date( propertyValue );
 
                 break;
 

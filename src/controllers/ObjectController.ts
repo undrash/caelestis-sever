@@ -40,6 +40,7 @@ class ObjectController {
 
         const { id, properties } = req.body;
 
+        // TODO: get PropertyValue ids and parse them to PropertyDef its
 
         Object.findById( id )
             .populate( "type" )
@@ -137,7 +138,7 @@ class ObjectController {
                     .then( () => res.send( { success: true, object, message: "Object successfully updated." } ) );
             })
             .catch( next );
-        
+
     }
 
 
@@ -233,7 +234,7 @@ class ObjectController {
 
                 for ( let prop of objectTypeProps ) {
 
-                    if ( prop.requiredFor.includes( type ) ) { //TODO double check this. probably works with indexOf instead
+                    if ( prop.requiredFor.indexOf( type ) > -1 ) { //TODO: Validation bug - should be debugged
 
                         for ( let p of properties ) {
 
