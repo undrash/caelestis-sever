@@ -1,7 +1,9 @@
 
 
+import Object from "../models/Object";
 import { Schema } from "mongoose";
 import { IPropertyValue } from "./interfaces/IPropertyValue";
+import { DataTypes } from "../constants/DataTypes";
 
 
 
@@ -29,17 +31,69 @@ const PropertyValueSchema = new Schema({
         required: true
     },
 
+    displayValue: {
+        type: String
+    },
+
     value: Schema.Types.Mixed
 
 
 });
 
 
-/** Workaround for automatically registering value updates */
+// /** Workaround for automatically registering value updates */
+//
+// PropertyValueSchema.pre( "validate", function (next) {
+//     this.markModified( "value" );
+//     next();
+// });
 
-PropertyValueSchema.pre( "validate", (next) => {
-    this.markModified( "value" );
-    next();
+
+/** Assign display value to lookup */
+
+PropertyValueSchema.pre( "validate", function (next) {
+    const PropertyValue = this as any;
+    const value = PropertyValue.value;
+
+    if ( ! value ) {
+        next();
+        return;
+    }
+
+    if ( PropertyValue.dataType === DataTypes.LOOKUP ) {
+        console.log( "LOOKUP PROPERTY FOUND BEFORE SAVE" );
+
+        Object.findById( value )
+            .populate( "type" )
+            .then( (object) => {
+
+                const { nameProperty } = ( object as any ).type;
+
+                console.log( "nameproperty: " + nameProperty );
+
+                for ( let propVal of object.properties ) {
+
+                    if ( nameProperty.toString() === propVal.propertyDef.toString() ) {
+
+                        console.log( "name property located, value inherited: " + propVal.value );
+
+                        PropertyValue.displayValue = propVal.value;
+
+                        next();
+                    }
+
+                }
+
+                next();
+
+
+
+            })
+    } else {
+        PropertyValue.displayValue = value;
+        next();
+        //TODO: maybe handle dates differently
+    }
 });
 
 

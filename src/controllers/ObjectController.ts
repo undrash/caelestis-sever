@@ -260,14 +260,14 @@ class ObjectController {
 
                 for ( let prop of objectTypeProps ) {
 
-                    console.log( properties );
-                    console.log( prop );
-                    console.log( prop._id );
+                    // console.log( properties );
+                    // console.log( prop );
+                    // console.log( prop._id );
 
 
                     let propVal = properties.filter( p => p.propertyDef === prop._id.toString() )[0];
 
-                    console.log( propVal );
+                    // console.log( propVal );
 
 
                     if ( ! propVal ) propVal = { propertyDef: prop._id, value: "" };
