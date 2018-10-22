@@ -132,7 +132,7 @@ class ObjectController {
             .then( (object) => {
 
                 object
-                    .populate( "properties.propertyDef", "requiredFor" )
+                    .populate( "properties.propertyDef", "requiredFor objectType" )
                     .populate("type", "name nameProperty" )
                     .execPopulate()
                     .then( () => res.send( { success: true, object, message: "Object successfully updated." } ) );
@@ -146,7 +146,7 @@ class ObjectController {
     public getObjects(req: Request, res: Response, next: NextFunction) {
 
         Object.find()
-            .populate("properties.propertyDef", "requiredFor" )
+            .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
@@ -158,7 +158,7 @@ class ObjectController {
         const { id } = req.params;
 
         Object.findById( id )
-            .populate("properties.propertyDef", "requiredFor" )
+            .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (object) => res.send( { success: true, object } ) )
             .catch( next );
@@ -170,7 +170,7 @@ class ObjectController {
         const type: string = req.params.id;
 
         Object.find( { type })
-            .populate("properties.propertyDef", "requiredFor" )
+            .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
@@ -363,7 +363,7 @@ class ObjectController {
          * */
 
         Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( req.body ) )
-            .populate("properties.propertyDef", "requiredFor" )
+            .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (objects) => res.send( { success: true, objects } ) )
             .catch( next );
