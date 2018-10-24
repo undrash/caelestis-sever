@@ -49,11 +49,20 @@ export class ObjectSearchHelper {
 
                             );
 
+                        } else if ( condition.dataType === DataTypes.TEXT ) {
+
+                            query[ "$and" ].push(
+                                {
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value:  { $regex: new RegExp( "^" + condition.value.toLowerCase() ),$options: "i" } } }
+                                }
+
+                            );
+
                         } else {
 
                             query[ "$and" ].push(
                                 {
-                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value:  condition.value  } }
+                                    "properties": { $elemMatch: { propertyDef: condition.propertyDef, value:  condition.value } }
                                 }
 
                             );
@@ -92,7 +101,7 @@ export class ObjectSearchHelper {
 
                         query[ "$and" ].push(
                             {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $regex : ".*" + condition.value + ".*"} } }
+                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $regex : ".*" + condition.value + ".*", $options: "i"} } }
                             }
 
                         );
@@ -104,7 +113,7 @@ export class ObjectSearchHelper {
 
                         query[ "$and" ].push(
                             {
-                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $regex : "^((?!" + condition.value +").)*$" } } }
+                                "properties": { $elemMatch: { propertyDef: condition.propertyDef, value: { $regex : "^((?!" + condition.value +").)*$", $options: "i" } } }
                             }
 
                         );
