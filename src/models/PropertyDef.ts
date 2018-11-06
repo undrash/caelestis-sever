@@ -13,6 +13,13 @@ import Object from "./Object";
 
 const PropertyDefSchema = new Schema({
 
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+
+
     name: {
         type: String,
         required: true,
@@ -23,15 +30,18 @@ const PropertyDefSchema = new Schema({
         }
     },
 
+
     dataType: {
         type: Number,
         required: true
     },
 
+
     objectType: {
         type: Schema.Types.ObjectId,
         ref: "ObjectType"
     },
+
 
     requiredFor: [ { type: Schema.Types.ObjectId, ref: "ObjectType" } ]
 

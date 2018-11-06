@@ -10,6 +10,7 @@ import { Schema } from "mongoose";
 
 const OptionSchema = new Schema({
 
+
     name: {
         type: String,
         required: true,
@@ -19,6 +20,7 @@ const OptionSchema = new Schema({
         }
     },
 
+
     image: {
         type: String,
         validate: {
@@ -26,6 +28,7 @@ const OptionSchema = new Schema({
             message: "Option URL has to to be at least one character in length, but not longer than 500."
         }
     }
+
 
 });
 

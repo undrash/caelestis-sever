@@ -5,7 +5,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import PropertyDef from "../models/PropertyDef";
 import Object from "../models/Object";
 import ObjectType from "../models/ObjectType";
-import {IObjectType} from "../models/interfaces/IObjectType";
+
 
 
 
