@@ -5,6 +5,8 @@ import * as mongoose from "mongoose";
 import PropertyDef from "../models/PropertyDef";
 import { DataTypes } from "../constants/DataTypes";
 import ObjectType from "../models/ObjectType";
+import Option from "../models/Option";
+import Options from "../models/Options";
 
 
 
@@ -86,6 +88,31 @@ class DataHelper {
 
 
 
+
+        /** TESTING OPTION CREATION */
+
+
+
+        const colors = new Options({
+            name: "Colors",
+            options: [
+                {
+                    name: "Red",
+                    image: "http://image-red.net"
+                },
+                {
+                    name: "Green",
+                    image: "http://image-green.net"
+                },
+                {
+                    name: "Blue",
+                    image: "http://image-blue.net"
+                }
+            ]
+        });
+
+
+
         Promise.all([
             title.save(),
             description.save(),
@@ -95,7 +122,8 @@ class DataHelper {
             firstName.save(),
             lastName.save(),
             position.save(),
-            person.save()
+            person.save(),
+            colors.save()
         ])
             .then( () => res.send( "Database successfully populated." ) )
             .catch( next );
