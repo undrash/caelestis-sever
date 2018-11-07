@@ -36,7 +36,7 @@ class ObjectTypeController {
 
         ObjectType.find()
             .populate( "properties" )
-            .then( (objectTypes) => res.send( { success: true, objectTypes } ) )
+            .then( (objectTypes) => res.status( 200 ).json( { success: true, objectTypes } ) )
             .catch( next );
 
     }
@@ -48,7 +48,7 @@ class ObjectTypeController {
 
         ObjectType.findById( id )
             .populate( "properties" )
-            .then( (objectType) => res.send( { success: true, objectType } ) )
+            .then( (objectType) => res.status( 200 ).json( { success: true, objectType } ) )
             .catch( next );
     }
 
@@ -71,7 +71,7 @@ class ObjectTypeController {
             .then( () => {
                 return PropertyDef.update( { _id: { $in: requiredProperties } }, { $addToSet: { requiredFor: objectType._id } } )
             })
-            .then( () => res.send( { success: true, objectType, message: "Object type successfully created." } ) )
+            .then( () => res.status( 200 ).json( { success: true, objectType, message: "Object type successfully created." } ) )
             .catch( next );
     }
 
@@ -81,7 +81,7 @@ class ObjectTypeController {
         const objectTypeId: string = req.params.id;
 
         ObjectType.findByIdAndRemove( objectTypeId )
-            .then( () => res.send( { success: true, message: "Object type successfully deleted." } ) )
+            .then( () => res.status( 200 ).json( { success: true, message: "Object type successfully deleted." } ) )
             .catch( next );
     }
 
@@ -125,12 +125,12 @@ class ObjectTypeController {
 
 
         if ( ValidationHelper.arrayHasDuplicates( newProperties ) ) {
-            res.send( { success: false, message: "Duplicate values found in property array provided." } );
+            res.status( 400 ).json( { success: false, message: "Duplicate values found in property array provided." } );
             return;
         }
 
         if ( newProperties.indexOf( nameProperty ) < 0 ) {
-            res.send( { success: false, message: "Name property specified is not listed in the properties collection." } );
+            res.status( 400 ).json( { success: false, message: "Name property specified is not listed in the properties collection." } );
             return;
         }
 
@@ -148,7 +148,7 @@ class ObjectTypeController {
             .then( (objectType) => {
 
                 if ( ! objectType ) {
-                    res.send( { success: false, message: "Object type of id " + id + " was not found." } );
+                    res.status( 400 ).json( { success: false, message: "Object type of id " + id + " was not found." } );
                     return;
                 }
 
@@ -219,7 +219,7 @@ class ObjectTypeController {
             .then( (promises) => {
                 return Promise.all( promises );
             })
-            .then( (results) => res.send( { success: true, objectType: updatedObjectType, objectsUpdated: results.length } ) )
+            .then( (results) => res.status( 200 ).json( { success: true, objectType: updatedObjectType, objectsUpdated: results.length } ) )
             .catch( next );
     }
 

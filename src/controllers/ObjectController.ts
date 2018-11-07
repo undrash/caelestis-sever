@@ -82,7 +82,7 @@ class ObjectController {
 
                                 if ( p.value == null || p.value == "" ) {
 
-                                    res.send( { success: false, message: (prop as any).name + " is a required property for objects of type " + ( object.type as any).name } );
+                                    res.status( 400 ).json( { success: false, message: (prop as any).name + " is a required property for objects of type " + ( object.type as any).name } );
                                     return;
 
                                 }
@@ -105,7 +105,7 @@ class ObjectController {
 
                         if ( ! ValidationHelper.validatePropertyValueForDataType( propVal.value, prop.dataType  ) ) {
 
-                            res.send( { success: false, message: "Invalid value " + propVal.value + " for property " + prop.name } );
+                            res.status( 400 ).json( { success: false, message: "Invalid value " + propVal.value + " for property " + prop.name } );
                             return;
 
                         }
@@ -126,6 +126,7 @@ class ObjectController {
 
                 }
 
+
                 return object.save();
 
             })
@@ -135,7 +136,7 @@ class ObjectController {
                     .populate( "properties.propertyDef", "requiredFor objectType" )
                     .populate("type", "name nameProperty" )
                     .execPopulate()
-                    .then( () => res.send( { success: true, object, message: "Object successfully updated." } ) );
+                    .then( () => res.status( 200 ).json( { success: true, object, message: "Object successfully updated." } ) );
             })
             .catch( next );
 
@@ -148,7 +149,7 @@ class ObjectController {
         Object.find()
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
-            .then( (objects) => res.send( { success: true, objects } ) )
+            .then( (objects) => res.status( 200 ).json( { success: true, objects } ) )
             .catch( next );
     }
 
@@ -160,7 +161,7 @@ class ObjectController {
         Object.findById( id )
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
-            .then( (object) => res.send( { success: true, object } ) )
+            .then( (object) => res.status( 200 ).json( { success: true, object } ) )
             .catch( next );
     }
 
@@ -172,7 +173,7 @@ class ObjectController {
         Object.find( { type })
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
-            .then( (objects) => res.send( { success: true, objects } ) )
+            .then( (objects) => res.status( 200 ).json( { success: true, objects } ) )
             .catch( next );
     }
 
@@ -205,6 +206,8 @@ class ObjectController {
          * */
 
 
+        const user = req.app.get( "user" );
+
         const { type, properties } = req.body;
 
         let ot = null;
@@ -216,7 +219,7 @@ class ObjectController {
                 objectType = objectType as IObjectType;
 
                 if ( ! objectType ) {
-                    res.send( { success: false, message: "Invalid object type specified at object creation" } );
+                    res.status( 400 ).json( { success: false, message: "Invalid object type specified at object creation" } );
                     return;
                 }
 
@@ -242,7 +245,7 @@ class ObjectController {
 
                                 if ( p.value == null || p.value == "" ) {
 
-                                    res.send( { success: false, message: prop.name + " is a required property for objects of type " + ot.name } );
+                                    res.status( 400 ).json( { success: false, message: prop.name + " is a required property for objects of type " + ot.name } );
                                     return;
                                 }
                             }
@@ -252,18 +255,13 @@ class ObjectController {
 
                 /** Create object */
 
-                let object = new Object( { type, nameProperty } );
+                let object = new Object( { user: user._id, type, nameProperty } );
                 let propertyValues = [];
 
 
                 /** Populate properties */
 
                 for ( let prop of objectTypeProps ) {
-
-                    // console.log( properties );
-                    // console.log( prop );
-                    // console.log( prop._id );
-
 
                     let propVal = properties.filter( p => p.propertyDef === prop._id.toString() )[0];
 
@@ -278,7 +276,7 @@ class ObjectController {
 
                         if ( ! ValidationHelper.validatePropertyValueForDataType( propVal.value, prop.dataType  ) ) {
 
-                            res.send( { success: false, message: "Invalid value " + propVal.value + " for property " + prop.name } );
+                            res.status( 400 ).json( { success: false, message: "Invalid value " + propVal.value + " for property " + prop.name } );
                             return;
 
                         }
@@ -307,7 +305,7 @@ class ObjectController {
                             .populate( "properties.propertyDef", "requiredFor" )
                             .populate("type", "name nameProperty" )
                             .execPopulate()
-                            .then( () => res.send( { success: true, object, message: "" } ) );
+                            .then( () => res.status( 200 ).json( { success: true, object, message: "" } ) );
 
                     })
                     .catch( next );
@@ -331,7 +329,7 @@ class ObjectController {
 
                 // TODO afterDeleteObject
 
-                res.send( { success: true, message: "Object successfully deleted." } );
+                res.status( 200 ).json( { success: true, message: "Object successfully deleted." } );
 
             })
             .catch( next );
@@ -365,7 +363,7 @@ class ObjectController {
         Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( req.body ) )
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
-            .then( (objects) => res.send( { success: true, objects } ) )
+            .then( (objects) => res.status( 200 ).json( { success: true, objects } ) )
             .catch( next );
     }
 

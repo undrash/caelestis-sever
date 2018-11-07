@@ -36,7 +36,7 @@ class OptionsController {
         });
 
         newOptions.save()
-            .then( () => res.send( { success: true, options: newOptions, message: "Options successfully created." } ) )
+            .then( () => res.status( 200 ).json( { success: true, options: newOptions, message: "Options successfully created." } ) )
             .catch( next );
 
     }
@@ -46,7 +46,7 @@ class OptionsController {
     public getOptions(req: Request, res: Response, next: NextFunction) {
 
         Options.find( {})
-            .then( (options) => res.send( { success: true, options } ) )
+            .then( (options) => res.status( 200 ).json( { success: true, options } ) )
             .catch( next );
 
     }

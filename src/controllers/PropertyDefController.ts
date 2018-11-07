@@ -43,7 +43,7 @@ class PropertyDefController {
         });
 
         propertyDef.save()
-            .then( () => res.send( { success: true, propertyDef, message: "PropertyDef successfully created." } ) )
+            .then( () => res.status( 200 ).json( { success: true, propertyDef, message: "PropertyDef successfully created." } ) )
             .catch( next );
     }
 
@@ -63,7 +63,7 @@ class PropertyDefController {
 
 
                 if ( objectTypes.length ) {
-                    res.send( { success: false, message: "Property definition is used as the name property for " + otNames + " object types. Therefore it cannot be deleted" } );
+                    res.status( 400 ).json( { success: false, message: "Property definition is used as the name property for " + otNames + " object types. Therefore it cannot be deleted" } );
                     return;
                 } else {
 
@@ -104,7 +104,7 @@ class PropertyDefController {
             .then( (promises) => {
                 return Promise.all( promises );
             })
-            .then( (results) => res.send( { success: true, message: "PropertyDef deletion successful, number of objects updated: " + results.length } ) )
+            .then( (results) => res.status( 200 ).json( { success: true, message: "PropertyDef deletion successful, number of objects updated: " + results.length } ) )
             .catch( next );
     }
 
@@ -116,7 +116,7 @@ class PropertyDefController {
         console.log( req.app.get( "user" ) );
 
         PropertyDef.find({})
-            .then( (propertyDefs) => res.send( { success: true, properties: propertyDefs } ) )
+            .then( (propertyDefs) => res.status( 200 ).json( { success: true, properties: propertyDefs } ) )
             .catch( next );
 
     }
@@ -127,7 +127,7 @@ class PropertyDefController {
         const { id } = req.params;
 
         PropertyDef.findById( id )
-            .then( (propertyDef) => res.send( { success: true, propertyDef } ) )
+            .then( (propertyDef) => res.status( 200 ).json( { success: true, propertyDef } ) )
             .catch( next );
     }
 
@@ -140,13 +140,13 @@ class PropertyDefController {
         if ( required ) {
 
             PropertyDef.findByIdAndUpdate( propertyDef, { $addToSet: { requiredFor: objectType } } )
-                .then( () => res.send( { success: true, message: `Property def has been set required for object type  ${ objectType }` } ) )
+                .then( () => res.status( 200 ).json( { success: true, message: `Property def has been set required for object type  ${ objectType }` } ) )
                 .catch( next );
 
         } else {
 
             PropertyDef.findByIdAndUpdate( propertyDef, { $pull: { requiredFor: objectType } } )
-                .then( () => res.send( { success: true, message: `Property def has been set as ***NOT** required for object type  ${ objectType }` } ) )
+                .then( () => res.status( 200 ).json( { success: true, message: `Property def has been set as ***NOT** required for object type  ${ objectType }` } ) )
                 .catch( next );
 
         }
@@ -180,7 +180,7 @@ class PropertyDefController {
                     .then( (promises) => {
                         return Promise.all( promises );
                     })
-                    .then( (results) => res.send( { success: true, objectsUpdated: results.length } ) )
+                    .then( (results) => res.status( 200 ).json( { success: true, objectsUpdated: results.length } ) )
                     .catch( next );
 
             });
