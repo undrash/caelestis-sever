@@ -1,19 +1,5 @@
 
-// const dotenv = require("dotenv").config();
-
-process.env.API_BASE ='/api/v1/';
-process.env.DEFAULT_TIMEZONE ='Europe/Bucharest';
-
-process.env.DATETIME_FORMAT ='YYYY-MM-DDTHH:mm:ssZ';
-process.env.DATE_FORMAT ='YYYY-MM-DD';
-process.env.TIME_FORMAT ='HH:mm:ss';
-
-process.env.JWT_SECRET ='ogA9ppB$S!dy!hu3Rauvg!L96';
-process.env.JWT_CONFIG_SESSION ='false';
-process.env.JWT_CONFIG_SESSION_FAILWITHERROR ='true';
-
-process.env.DB_IP ='127.0.0.1';
-
+require( "dotenv" ).config();
 
 
 import * as compression from "compression";
@@ -31,6 +17,7 @@ import OptionsController from "./controllers/OptionsController";
 import ObjectController from "./controllers/ObjectController";
 import UserController from "./controllers/UserController";
 import DataHelper from "./helpers/DataHelper";
+
 
 
 
@@ -99,14 +86,15 @@ class Server {
         router = express.Router();
 
         this.app.use( '/', router );
-        this.app.use( "/api/v1/users/", UserController );
-        this.app.use( "/api/v1/property-definitions/", PropertyDefController );
-        this.app.use( "/api/v1/object-types/", ObjectTypeController );
-        this.app.use( "/api/v1/options/", OptionsController );
-        this.app.use( "/api/v1/objects/", ObjectController );
-        this.app.use( "/api/v1/data/", DataHelper );
 
-        this.app.use( "/api/v1/authentication/", Authentication.router );
+        this.app.use( process.env.API_BASE + "authentication/", Authentication.router );
+
+        this.app.use( process.env.API_BASE + "users/", UserController );
+        this.app.use( process.env.API_BASE + "property-definitions/", PropertyDefController );
+        this.app.use( process.env.API_BASE + "object-types/", ObjectTypeController );
+        this.app.use( process.env.API_BASE + "options/", OptionsController );
+        this.app.use( process.env.API_BASE + "objects/", ObjectController );
+        this.app.use( process.env.API_BASE + "data/", DataHelper );
 
     }
 
