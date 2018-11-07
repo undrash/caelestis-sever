@@ -56,6 +56,10 @@ class Server {
 
         this.app.all( process.env.API_BASE + "*", (req, res, next) => {
 
+            //TODO: Remove @ release
+            if ( req.path.includes( process.env.API_BASE + "data/populate" ) ) return next();
+
+
             if ( req.path.includes( process.env.API_BASE + "authentication/login" ) ) return next();
 
             return Authentication.authenticate( (err, user, info) => {

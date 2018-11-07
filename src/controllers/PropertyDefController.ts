@@ -112,6 +112,9 @@ class PropertyDefController {
 
     public getPropertyDefs(req: Request, res: Response, next: NextFunction) {
 
+
+        console.log( req.app.get( "user" ) );
+
         PropertyDef.find({})
             .then( (propertyDefs) => res.send( { success: true, properties: propertyDefs } ) )
             .catch( next );

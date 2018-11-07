@@ -44,6 +44,16 @@ class DataHelper {
         }) as any;
 
 
+        const ildi = new User({
+            firstName: "Ildiko",
+            lastName: "Ignacz",
+            profileImage: "http://userimage.png",
+            email: "ildi@ventana.com",
+            password: "asd123",
+            language: "EN"
+        }) as any;
+
+
 
         const title = new PropertyDef({
             user: andrei._id,
@@ -133,6 +143,7 @@ class DataHelper {
 
         Promise.all([
             andrei.save(),
+            ildi.save(),
             title.save(),
             description.save(),
             warehouse.save(),
