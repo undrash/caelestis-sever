@@ -13,5 +13,5 @@ export interface IUser extends Document {
     email: string,
     password: string,
     language: string,
-    comparePassword(password, Function): void
+    comparePassword(password): Promise<boolean>
 }

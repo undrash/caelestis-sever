@@ -26,6 +26,8 @@ class DataHelper {
     public routes() {
         this.router.get( "/populate", this.populate );
         this.router.get( "/drop", this.drop );
+        this.router.get( "/test/:userId&:propertyId", this.test );
+        this.router.get( "/test/:userId", this.test2 );
     }
 
 
@@ -154,6 +156,23 @@ class DataHelper {
     public drop(req: Request, res: Response, next: NextFunction) {
 
         console.log( mongoose.connection.collections );
+    }
+
+
+
+    public test(req: Request, res: Response, next: NextFunction) {
+
+        const { userId, propertyId } = req.params;
+
+        res.send( { userId, propertyId } );
+    }
+
+
+    public test2(req: Request, res: Response, next: NextFunction) {
+
+        const { userId } = req.params;
+
+        res.send( { userId } );
     }
 }
 
