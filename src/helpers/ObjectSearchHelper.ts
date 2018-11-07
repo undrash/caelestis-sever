@@ -11,8 +11,8 @@ export class ObjectSearchHelper {
 
 
 
-    public static generateQueryFromSearchConditions(searchConditions: any): any {
-        let query = {};
+    public static generateQueryFromSearchConditions(user: string, searchConditions: any): any {
+        let query = { user };
 
         const { types } = searchConditions;
         const { conditions } = searchConditions;

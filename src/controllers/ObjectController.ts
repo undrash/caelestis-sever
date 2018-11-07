@@ -38,11 +38,13 @@ class ObjectController {
 
     public editObject(req: Request, res: Response, next: NextFunction) {
 
+        const user = req.app.get( "user" )._id;
+
         const { id, properties } = req.body;
 
         // TODO: get PropertyValue ids and parse them to PropertyDef its
 
-        Object.findById( id )
+        Object.findOne( { _id: id, user } )
             .populate( "type" )
             .populate("properties.propertyDef" )
             .then( (object) => {
@@ -146,7 +148,9 @@ class ObjectController {
 
     public getObjects(req: Request, res: Response, next: NextFunction) {
 
-        Object.find()
+        const user = req.app.get( "user" )._id;
+
+        Object.find( { user } )
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (objects) => res.status( 200 ).json( { success: true, objects } ) )
@@ -156,9 +160,11 @@ class ObjectController {
 
 
     public getObjectById(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
 
-        Object.findById( id )
+        const { id } = req.params;
+        const user = req.app.get( "user" )._id;
+
+        Object.findOne( { _id: id, user } )
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (object) => res.status( 200 ).json( { success: true, object } ) )
@@ -168,9 +174,11 @@ class ObjectController {
 
 
     public getObjectsByType(req: Request, res: Response, next: NextFunction){
-        const type: string = req.params.id;
 
-        Object.find( { type })
+        const type: string = req.params.id;
+        const user = req.app.get( "user" )._id;
+
+        Object.find( { user, type })
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (objects) => res.status( 200 ).json( { success: true, objects } ) )
@@ -206,14 +214,13 @@ class ObjectController {
          * */
 
 
-        const user = req.app.get( "user" );
-
         const { type, properties } = req.body;
+        const user = req.app.get( "user" )._id.toString();
 
         let ot = null;
         let nameProperty = null;
 
-        ObjectType.findById( type )
+        ObjectType.findOne( { user, _id: type } )
             .then( (objectType): any => {
 
                 objectType = objectType as IObjectType;
@@ -232,6 +239,10 @@ class ObjectController {
             .then( (objectTypeProps) => {
 
                 objectTypeProps = objectTypeProps as [ IPropertyDef ];
+
+
+                console.log( "objectTypeProps");
+                console.log( objectTypeProps);
 
                 /** Validate required properties */
 
@@ -255,7 +266,7 @@ class ObjectController {
 
                 /** Create object */
 
-                let object = new Object( { user: user._id, type, nameProperty } );
+                let object = new Object( { user, type, nameProperty } );
                 let propertyValues = [];
 
 
@@ -321,13 +332,11 @@ class ObjectController {
 
     public deleteObject(req: Request, res: Response, next: NextFunction) {
         const objectId: string = req.params.id;
+        const user = req.app.get( "user" )._id;
 
-        // TODO beforeDeleteObject
 
-        Object.findByIdAndRemove( objectId )
+        Object.findOneAndRemove( { user, _id: objectId } )
             .then( () => {
-
-                // TODO afterDeleteObject
 
                 res.status( 200 ).json( { success: true, message: "Object successfully deleted." } );
 
@@ -360,7 +369,9 @@ class ObjectController {
          *
          * */
 
-        Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( req.body ) )
+        const user = req.app.get( "user" )._id;
+
+        Object.find( ObjectSearchHelper.generateQueryFromSearchConditions( user, req.body ) )
             .populate("properties.propertyDef", "requiredFor objectType" )
             .populate("type", "name nameProperty" )
             .then( (objects) => res.status( 200 ).json( { success: true, objects } ) )

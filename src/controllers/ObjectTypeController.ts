@@ -33,8 +33,9 @@ class ObjectTypeController {
 
 
     public getObjectTypes(req: Request, res: Response, next: NextFunction) {
+        const user = req.app.get( "user" )._id;
 
-        ObjectType.find()
+        ObjectType.find( { user })
             .populate( "properties" )
             .then( (objectTypes) => res.status( 200 ).json( { success: true, objectTypes } ) )
             .catch( next );
@@ -45,8 +46,9 @@ class ObjectTypeController {
 
     public getObjectTypeById(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
+        const user = req.app.get( "user" )._id;
 
-        ObjectType.findById( id )
+        ObjectType.findOne( { user, _id: id } )
             .populate( "properties" )
             .then( (objectType) => res.status( 200 ).json( { success: true, objectType } ) )
             .catch( next );
@@ -56,12 +58,14 @@ class ObjectTypeController {
 
     public createObjectType(req: Request, res: Response, next: NextFunction) {
         const { name, nameProperty, properties } = req.body;
+        const user = req.app.get( "user" )._id;
 
         const propertyIds = properties.map( p => p.id );
         const requiredProperties = properties.filter( p => p.required === true ).map( p => p.id );
         requiredProperties.push( nameProperty );
 
         const objectType = new ObjectType({
+            user,
             name,
             nameProperty,
             properties: propertyIds
@@ -79,8 +83,9 @@ class ObjectTypeController {
 
     public deleteObjectType(req: Request, res: Response, next: NextFunction) {
         const objectTypeId: string = req.params.id;
+        const user = req.app.get( "user" )._id;
 
-        ObjectType.findByIdAndRemove( objectTypeId )
+        ObjectType.findOneAndRemove( { user , _id: objectTypeId } )
             .then( () => res.status( 200 ).json( { success: true, message: "Object type successfully deleted." } ) )
             .catch( next );
     }
@@ -120,6 +125,7 @@ class ObjectTypeController {
 
 
         const { id, name, nameProperty, properties } = req.body;
+        const user = req.app.get( "user" )._id;
 
         const newProperties = properties.map( p => p.id );
 
@@ -143,7 +149,7 @@ class ObjectTypeController {
         let notRequiredProperties = []; // Items that are marked as not required in the new set, and also properties that have been removed
         let updatedObjectType = null;
 
-        ObjectType.findById( id )
+        ObjectType.findOne( { user, _id: id } )
             .populate( "properties" )
             .then( (objectType) => {
 

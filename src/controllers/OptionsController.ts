@@ -29,8 +29,10 @@ class OptionsController {
 
     public createOptions(req: Request, res: Response, next: NextFunction) {
         const { name, options } = req.body;
+        const user = req.app.get( "user" )._id;
 
         const newOptions = new Options({
+            user,
             name,
             options
         });
@@ -45,7 +47,9 @@ class OptionsController {
 
     public getOptions(req: Request, res: Response, next: NextFunction) {
 
-        Options.find( {})
+        const user = req.app.get( "user" )._id;
+
+        Options.find( { user } )
             .then( (options) => res.status( 200 ).json( { success: true, options } ) )
             .catch( next );
 

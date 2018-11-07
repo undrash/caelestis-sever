@@ -34,8 +34,10 @@ class PropertyDefController {
 
     public createPropertyDef(req: Request, res: Response, next: NextFunction) {
         const { name, dataType, objectType, requiredFor } = req.body;
+        const user = req.app.get( "user" )._id;
 
         const propertyDef = new PropertyDef({
+            user,
             name,
             dataType,
             objectType,
@@ -51,8 +53,9 @@ class PropertyDefController {
 
     public deletePropertyDef(req: Request, res: Response, next: NextFunction) {
         const propertyDefId: string = req.params.id;
+        const user = req.app.get( "user" )._id;
 
-        ObjectType.find( { nameProperty: propertyDefId } )
+        ObjectType.find( { user, nameProperty: propertyDefId } )
             .then( (objectTypes): any => {
 
                 let otNames: string = "";
@@ -67,7 +70,7 @@ class PropertyDefController {
                     return;
                 } else {
 
-                    return ObjectType.find( { properties: propertyDefId } );
+                    return ObjectType.find( { user, properties: propertyDefId } );
 
                 }
 
@@ -111,11 +114,11 @@ class PropertyDefController {
 
 
     public getPropertyDefs(req: Request, res: Response, next: NextFunction) {
+        const user = req.app.get( "user" )._id;
 
 
-        console.log( req.app.get( "user" ) );
 
-        PropertyDef.find({})
+        PropertyDef.find({ user } )
             .then( (propertyDefs) => res.status( 200 ).json( { success: true, properties: propertyDefs } ) )
             .catch( next );
 
@@ -125,8 +128,9 @@ class PropertyDefController {
 
     public getPropertyDefById(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
+        const user = req.app.get( "user" )._id;
 
-        PropertyDef.findById( id )
+        PropertyDef.findOne( { user, _id: id } )
             .then( (propertyDef) => res.status( 200 ).json( { success: true, propertyDef } ) )
             .catch( next );
     }
@@ -158,9 +162,9 @@ class PropertyDefController {
 
     public editPropertyDefName(req: Request, res: Response, next: NextFunction) {
         const { id, name } = req.body;
+        const user = req.app.get( "user" )._id;
 
-
-        PropertyDef.findByIdAndUpdate( id, { name } )
+        PropertyDef.findOneAndUpdate( { user, _id: id }, { name } )
             .then( () => {
 
                 Object.find( { "properties.propertyDef": id }, { "properties.name": 1, "properties.propertyDef": 1 },  )
