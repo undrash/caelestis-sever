@@ -30,6 +30,7 @@ class Server {
         this.app = express();
         this.config();
         this.routes();
+        this.errors();
     }
 
 
@@ -47,10 +48,6 @@ class Server {
         this.app.use( compression() );
         this.app.use( helmet() );
         this.app.use( cors() );
-
-        this.app.use( (err, req, res, next) => {
-            res.status( 422 ).send( { error: err.message } );
-        });
 
         this.app.use( Authentication.initialize() );
 
@@ -82,6 +79,8 @@ class Server {
             })(req, res, next);
         });
 
+
+
     }
 
 
@@ -101,6 +100,14 @@ class Server {
         this.app.use( process.env.API_BASE + "objects/", ObjectController );
         this.app.use( process.env.API_BASE + "data/", DataHelper );
 
+    }
+
+
+
+    public errors() {
+        this.app.use( (err, req, res, next) => {
+            res.status( 422 ).json( { success: false, message: err.message } );
+        });
     }
 
 }

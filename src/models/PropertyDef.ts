@@ -47,21 +47,29 @@ const PropertyDefSchema = new Schema({
 });
 
 
+
+/** LOOKUP TYPE CHECKS */
 PropertyDefSchema.pre( "save", function (next) {
     const self = this as IPropertyDef;
 
-    if ( self.dataType !== DataTypes.LOOKUP  ) next();
+    if ( self.dataType !== DataTypes.LOOKUP  ) {
+        next();
+        return;
+    }
 
 
     if ( ! self.objectType ) {
         next( new Error( "Property of type LOOKUP requires an object type associated" ) );
+        return;
     }
 
 
-    if ( ! /^[a-fA-F0-9]{24}$/.test( self.objectType.toString() ) ) {
-        next( new Error( "Invalid id provided for object type, when creating a property definition." ) );
-    }
+    // if ( ! /^[a-fA-F0-9]{24}$/.test( self.objectType.toString() ) ) {
+    //     next( new Error( "Invalid id provided for object type, when creating a property definition." ) );
+    // }
 
+
+    /** Validate Object Type Id */
 
     ObjectType.count( { _id: self.objectType } , function (err, count) {
         if ( err ) {
@@ -82,12 +90,16 @@ PropertyDefSchema.pre( "save", function (next) {
 
 
 
+/** Required for check */
 PropertyDefSchema.pre( "save", function (next) {
     const self = this as IPropertyDef;
 
-    if ( ! self.requiredFor.length ) next();
+    if ( ! self.requiredFor.length ) {
+        next();
+        return;
+    }
 
-    Object.count( { _id: { $in: self.requiredFor } }, function (err, count) {
+    Object.countDocuments( { _id: { $in: self.requiredFor } }, function (err, count) {
 
         if ( err ) {
 
@@ -104,6 +116,30 @@ PropertyDefSchema.pre( "save", function (next) {
 
     });
 
+});
+
+
+
+/** Check for name duplicate */
+PropertyDefSchema.pre( "save", function (next) {
+    const self = this as IPropertyDef;
+
+    PropertyDef.countDocuments( { user: self.user, name: self.name }, function (err, count) {
+        if ( err ) {
+
+            next( err );
+
+        } else if ( count > 0 ) {
+
+            self.invalidate( "name", "Property Definition name must be unique.", null );
+            next( new Error( "Property Definition name must be unique." ) );
+
+        } else {
+
+            next();
+
+        }
+    });
 });
 
 
