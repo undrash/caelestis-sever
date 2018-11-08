@@ -11,5 +11,6 @@ export interface IPropertyDef extends Document {
     name: string,
     dataType: number,
     objectType: Schema.Types.ObjectId,
+    options: Schema.Types.ObjectId,
     requiredFor: Schema.Types.ObjectId[]
 }

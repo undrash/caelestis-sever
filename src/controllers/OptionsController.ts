@@ -19,6 +19,7 @@ class OptionsController {
 
     public routes() {
         this.router.get( '/', this.getOptions );
+        this.router.get( "/:id", this.getOptionsById );
         this.router.post( '/', this.createOptions );
         this.router.delete( "/:id", this.deleteOptions );
         this.router.put( "/edit", this.editOptions );
@@ -52,6 +53,19 @@ class OptionsController {
         Options.find( { user } )
             .then( (options) => res.status( 200 ).json( { success: true, options } ) )
             .catch( next );
+
+    }
+
+
+
+    public getOptionsById(req: Request, res: Response, next: NextFunction) {
+        const _id = req.params.id;
+        const user = req.app.get( "user" )._id;
+
+        Options.findOne( { user, _id} )
+            .then( (options) => res.status( 200 ).json( { success: true, options } ) )
+            .catch( next );
+
 
     }
 

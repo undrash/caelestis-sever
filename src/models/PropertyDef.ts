@@ -6,6 +6,7 @@ import { IPropertyDef } from "./interfaces/IPropertyDef";
 import { DataTypes } from "../constants/DataTypes";
 import ObjectType from "./ObjectType";
 import Object from "./Object";
+import Options from "./Options";
 
 
 
@@ -39,6 +40,12 @@ const PropertyDefSchema = new Schema({
     objectType: {
         type: Schema.Types.ObjectId,
         ref: "ObjectType"
+    },
+
+
+    options: {
+        type: Schema.Types.ObjectId,
+        ref: "Options"
     },
 
 
@@ -112,6 +119,49 @@ PropertyDefSchema.pre( "save", function (next) {
     });
 
 });
+
+
+/** Option type check */
+PropertyDefSchema.pre( "save", function (next) {
+    const self = this as IPropertyDef;
+
+    if ( self.dataType !== DataTypes.OPTION  ) {
+        next();
+        return;
+    }
+
+
+    if ( ! self.options ) {
+        next( new Error( "Property of type OPTIONS requires an options object associated" ) );
+        return;
+    }
+
+
+    if ( ! /^[a-fA-F0-9]{24}$/.test( self.options.toString() ) ) {
+        next( new Error( "Invalid id provided for options, when creating a property definition." ) );
+        return;
+    }
+
+
+    /** Validate Options Id */
+
+    Options.count( { _id: self.options } , function (err, count) {
+        if ( err ) {
+
+            next( err );
+
+        } else if ( count < 1 ) {
+
+            self.invalidate( "options", "Options must exist in the system, for it to be linked to a property definition.", null );
+            next( new Error( "Options id provided does not link to an existing document in the database." ) );
+
+        } else {
+            next();
+        }
+    });
+
+});
+
 
 
 

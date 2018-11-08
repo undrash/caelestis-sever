@@ -5,6 +5,8 @@ import { Router, Request, Response, NextFunction } from "express";
 import PropertyDef from "../models/PropertyDef";
 import Object from "../models/Object";
 import ObjectType from "../models/ObjectType";
+import {DataTypes} from "../constants/DataTypes";
+import {IPropertyDef} from "../models/interfaces/IPropertyDef";
 
 
 
@@ -33,16 +35,41 @@ class PropertyDefController {
 
 
     public createPropertyDef(req: Request, res: Response, next: NextFunction) {
-        const { name, dataType, objectType, requiredFor } = req.body;
+        const { name, dataType, objectType, options, requiredFor } = req.body;
         const user = req.app.get( "user" )._id;
 
-        const propertyDef = new PropertyDef({
-            user,
-            name,
-            dataType,
-            objectType,
-            requiredFor
-        });
+        let propertyDef: IPropertyDef;
+
+        if ( dataType === DataTypes.LOOKUP ) {
+
+            propertyDef = new PropertyDef({
+                user,
+                name,
+                dataType,
+                objectType,
+                requiredFor
+            });
+
+        } else if ( dataType === DataTypes.OPTION ) {
+
+            propertyDef = new PropertyDef({
+                user,
+                name,
+                dataType,
+                options,
+                requiredFor
+            });
+
+        } else {
+
+            propertyDef = new PropertyDef({
+                user,
+                name,
+                dataType,
+                requiredFor
+            });
+
+        }
 
         propertyDef.save()
             .then( () => res.status( 200 ).json( { success: true, propertyDef, message: "PropertyDef successfully created." } ) )
