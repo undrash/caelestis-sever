@@ -61,6 +61,7 @@ class Server {
 
 
             if ( req.path.includes( process.env.API_BASE + "authentication/login" ) ) return next();
+            if ( req.path.includes( process.env.API_BASE + "authentication/sign-up" ) ) return next();
 
             return Authentication.authenticate( (err, user, info) => {
 

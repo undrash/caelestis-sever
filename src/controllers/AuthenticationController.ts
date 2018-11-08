@@ -23,6 +23,7 @@ class AuthenticationController {
 
     public routes() {
         this.router.post( "/login", this.login );
+        this.router.post( "/sign-up", this.signUp );
     }
 
 
@@ -38,7 +39,7 @@ class AuthenticationController {
 
 
 
-    private login = async (req, res) => {
+    private login = async (req: Request, res: Response) => {
 
         try {
             let user = await User.findOne({ "email": req.body.email } ).exec();
@@ -56,10 +57,34 @@ class AuthenticationController {
             res.status( 200 ).json( { success: true, tokenData: this.genToken( user ) } );
 
         } catch (err) {
-            res.status( 401 ).json( { "message": "Invalid credentials", "errors": err } );
+            res.status( 401 ).json( { success: false, message: "Invalid credentials", errors: err } );
         }
     };
 
+
+
+    private signUp = async (req: Request, res: Response, next: NextFunction) => {
+
+        const { firstName, lastName, email, password, language } = req.body;
+
+        if ( ! firstName || ! lastName || ! email || ! password || ! language ) {
+            res.status( 400 ).json( { success: false, message: "Missing parameters at sign up." } );
+            return;
+        }
+
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            password,
+            language
+        });
+
+        user.save()
+            .then( () => res.status( 200 ).json( { success: true, tokenData: this.genToken( user ) } ) )
+            .catch( next );
+
+    };
 
 
     private genToken(user: IUser): Object {
