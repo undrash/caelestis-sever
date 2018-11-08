@@ -48,7 +48,31 @@ const PropertyDefSchema = new Schema({
 
 
 
-/** LOOKUP TYPE CHECKS */
+/** Check for name duplicate */
+PropertyDefSchema.pre( "save", function (next) {
+    const self = this as IPropertyDef;
+
+    PropertyDef.countDocuments( { user: self.user, name: self.name }, function (err, count) {
+        if ( err ) {
+
+            next( err );
+
+        } else if ( count > 0 ) {
+
+            self.invalidate( "name", "Property Definition name must be unique.", null );
+            next( new Error( "Property Definition name must be unique." ) );
+
+        } else {
+
+            next();
+
+        }
+    });
+});
+
+
+
+/** Lookup type check */
 PropertyDefSchema.pre( "save", function (next) {
     const self = this as IPropertyDef;
 
@@ -64,9 +88,10 @@ PropertyDefSchema.pre( "save", function (next) {
     }
 
 
-    // if ( ! /^[a-fA-F0-9]{24}$/.test( self.objectType.toString() ) ) {
-    //     next( new Error( "Invalid id provided for object type, when creating a property definition." ) );
-    // }
+    if ( ! /^[a-fA-F0-9]{24}$/.test( self.objectType.toString() ) ) {
+        next( new Error( "Invalid id provided for object type, when creating a property definition." ) );
+        return;
+    }
 
 
     /** Validate Object Type Id */
@@ -116,30 +141,6 @@ PropertyDefSchema.pre( "save", function (next) {
 
     });
 
-});
-
-
-
-/** Check for name duplicate */
-PropertyDefSchema.pre( "save", function (next) {
-    const self = this as IPropertyDef;
-
-    PropertyDef.countDocuments( { user: self.user, name: self.name }, function (err, count) {
-        if ( err ) {
-
-            next( err );
-
-        } else if ( count > 0 ) {
-
-            self.invalidate( "name", "Property Definition name must be unique.", null );
-            next( new Error( "Property Definition name must be unique." ) );
-
-        } else {
-
-            next();
-
-        }
-    });
 });
 
 

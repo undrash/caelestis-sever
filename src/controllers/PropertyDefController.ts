@@ -55,6 +55,8 @@ class PropertyDefController {
         const propertyDefId: string = req.params.id;
         const user = req.app.get( "user" )._id;
 
+        let objectsEdited = 0;
+
         ObjectType.find( { user, nameProperty: propertyDefId } )
             .then( (objectTypes): any => {
 
@@ -83,6 +85,8 @@ class PropertyDefController {
                     objectTypeIds.push( ot._id );
 
                     ot.properties.pull( propertyDefId );
+
+                    ot.save();
                 }
 
                 return Object.find( { type: { $in: objectTypeIds } } );
@@ -107,7 +111,12 @@ class PropertyDefController {
             .then( (promises) => {
                 return Promise.all( promises );
             })
-            .then( (results) => res.status( 200 ).json( { success: true, message: "PropertyDef deletion successful, number of objects updated: " + results.length } ) )
+            .then( (results): any => {
+                objectsEdited = results.length;
+
+                return PropertyDef.findOneAndRemove( { user, _id: propertyDefId } )
+            })
+            .then( () => res.status( 200 ).json( { success: true, message: "PropertyDef deletion successful, number of objects updated: " + objectsEdited } ) )
             .catch( next );
     }
 
