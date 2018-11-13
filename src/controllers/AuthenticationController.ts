@@ -35,7 +35,7 @@ class AuthenticationController {
 
 
 
-    public authenticate = (callback) => passport.authenticate("jwt", { session: false, failWithError: true }, callback);
+    public authenticate = (callback) => passport.authenticate("jwt", { session: false, failWithError: true }, callback );
 
 
 
@@ -117,12 +117,12 @@ class AuthenticationController {
 
         return new Strategy(params, (req, payload: any, done) => {
             User.findOne({ "email": payload.email }, (err, user) => {
-                /* istanbul ignore next: passport response */
-                if (err) {
+
+                if ( err ) {
                     return done(err);
                 }
-                /* istanbul ignore next: passport response */
-                if (user === null) {
+
+                if ( user === null ) {
                     return done( null, false, { message: "The user in the token was not found" } );
                 }
 
