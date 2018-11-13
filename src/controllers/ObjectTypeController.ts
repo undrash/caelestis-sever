@@ -142,12 +142,12 @@ class ObjectTypeController {
 
 
 
-        let oldProperties = []; // Initial properties of the Object Type before edit
-        let removedProperties = []; // Items from the old properties, which are missing from the new set of properties
-        let addedProperties = []; // Items from the new properties, which are missing from the old set of properties
-        let requiredProperties = []; // Items that are marked as required in the new set of properties ***PLUS*** the property marked as name
-        let notRequiredProperties = []; // Items that are marked as not required in the new set, and also properties that have been removed
-        let updatedObjectType = null;
+        let oldProperties           = []; // Initial properties of the Object Type before edit
+        let removedProperties       = []; // Items from the old properties, which are missing from the new set of properties
+        let addedProperties         = []; // Items from the new properties, which are missing from the old set of properties
+        let requiredProperties      = []; // Items that are marked as required in the new set of properties ***PLUS*** the property marked as name
+        let notRequiredProperties   = []; // Items that are marked as not required in the new set, and also properties that have been removed
+        let updatedObjectType       = null;
 
         ObjectType.findOne( { user, _id: id } )
             .populate( "properties" )
