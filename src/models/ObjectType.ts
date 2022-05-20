@@ -23,7 +23,7 @@ const ObjectTypeSchema = new Schema({
         required: true,
         validate: {
             validator: (name) => name.length > 0 && name.length <= 30,
-            message: "Object type name has to to be at least one characters in length, but not longer than 30."
+            msg: "Object type name has to to be at least one characters in length, but not longer than 30."
         }
     },
 

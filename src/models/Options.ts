@@ -23,7 +23,7 @@ const OptionsSchema = new Schema({
         required: true,
         validate: {
             validator: (name) => name.length > 0 && name.length <= 30,
-            message: "Options name has to to be at least one character in length, but not longer than 30."
+            msg: "Options name has to to be at least one character in length, but not longer than 30."
         }
     },
 

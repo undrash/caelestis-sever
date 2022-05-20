@@ -2,7 +2,7 @@
 
 import { Schema, model, Model } from "mongoose";
 import { IUser } from "./interfaces/IUser";
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 
 
@@ -18,7 +18,7 @@ const UserSchema = new Schema({
         required: true,
         validate: {
             validator: (name) => name.length > 1 && name.length <= 30,
-            message: "First name has to to be at least two characters in length, but not longer than 30."
+            msg: "First name has to to be at least two characters in length, but not longer than 30."
         }
     },
 
@@ -28,7 +28,7 @@ const UserSchema = new Schema({
         required: true,
         validate: {
             validator: (name) => name.length > 1 && name.length <= 30,
-            message: "First name has to to be at least two characters in length, but not longer than 30."
+            msg: "First name has to to be at least two characters in length, but not longer than 30."
         }
     },
 
@@ -45,7 +45,7 @@ const UserSchema = new Schema({
                 let emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
                 return emailRegex.test( email );
             },
-            message: "Please provide a valid email address."
+            msg: "Please provide a valid email address."
         }
     },
 
@@ -55,7 +55,7 @@ const UserSchema = new Schema({
         required: true,
         validate: {
             validator: (password) => password.length > 4 && password.length < 75,
-            message: "Password must contain 4 or more characters."
+            msg: "Password must contain 4 or more characters."
         }
     },
 
@@ -65,7 +65,7 @@ const UserSchema = new Schema({
         required: true,
         validate: {
             validator: (lang) => lang.length > 1 && lang.length < 11,
-            message: "Language string must be at least 2 characters long, but cannot exceed 10 characters."
+            msg: "Language string must be at least 2 characters long, but cannot exceed 10 characters."
         }
     }
 

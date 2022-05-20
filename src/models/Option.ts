@@ -16,7 +16,7 @@ const OptionSchema = new Schema({
         required: true,
         validate: {
             validator: (name) => name.length > 0 && name.length <= 30,
-            message: "Option name has to to be at least one character in length, but not longer than 30."
+            msg: "Option name has to to be at least one character in length, but not longer than 30."
         }
     },
 
@@ -25,7 +25,7 @@ const OptionSchema = new Schema({
         type: String,
         validate: {
             validator: (url) => url.length > 0 && url.length <= 500,
-            message: "Option URL has to to be at least one character in length, but not longer than 500."
+            msg: "Option URL has to to be at least one character in length, but not longer than 500."
         }
     }
 
